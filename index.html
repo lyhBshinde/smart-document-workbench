@@ -1,0 +1,2923 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Document Utility Center</title>
+<style>
+:root {
+  --primary: #0078D4;
+  --primary-dark: #005A9E;
+  --primary-light: #2B88D8;
+  --bg: #F4F6F8;
+  --card-bg: #FFFFFF;
+  --text: #323130;
+  --text-secondary: #605E5C;
+  --text-tertiary: #A19F9D;
+  --border: #EDEBE9;
+  --border-strong: #D2D0CE;
+  --success: #107C10;
+  --warning: #FF8C00;
+  --error: #D13438;
+  --sidebar-width: 260px;
+  --shadow-sm: 0 2px 4px rgba(0,0,0,0.04), 0 0 8px rgba(0,0,0,0.04);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
+  --radius: 6px;
+  --radius-lg: 8px;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body {
+  height: 100%;
+  font-family: "Segoe UI", "Microsoft YaHei", -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 14px;
+  color: var(--text);
+  background: var(--bg);
+  overflow: hidden;
+}
+.app-container { display: flex; height: 100vh; }
+
+/* ========== Sidebar ========== */
+.sidebar {
+  width: var(--sidebar-width);
+  height: 100vh;
+  background: var(--card-bg);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  z-index: 100;
+}
+.sidebar-header {
+  padding: 20px 20px 16px;
+  border-bottom: 1px solid var(--border);
+}
+.sidebar-header .logo {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--primary);
+  line-height: 1.3;
+}
+.sidebar-header .subtitle {
+  font-size: 11px;
+  color: var(--text-tertiary);
+  margin-top: 4px;
+  letter-spacing: 0.3px;
+}
+.nav-list {
+  list-style: none;
+  padding: 10px 8px;
+  flex: 1;
+  overflow-y: auto;
+}
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  border-radius: var(--radius);
+  cursor: pointer;
+  font-size: 14px;
+  color: var(--text);
+  transition: all 0.15s;
+  margin-bottom: 2px;
+  user-select: none;
+}
+.nav-item:hover { background: #F3F2F1; }
+.nav-item.active {
+  background: #E8F1FA;
+  color: var(--primary-dark);
+  font-weight: 600;
+}
+.nav-item .nav-icon { font-size: 18px; width: 22px; text-align: center; }
+.sidebar-footer {
+  padding: 14px 20px;
+  border-top: 1px solid var(--border);
+  font-size: 11px;
+  color: var(--text-tertiary);
+}
+
+/* ========== Main Content ========== */
+.main-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0;
+}
+
+/* ========== Security Banner ========== */
+.security-banner {
+  background: linear-gradient(135deg, #0078D4 0%, #005A9E 100%);
+  color: #fff;
+  padding: 10px 28px;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  flex-wrap: wrap;
+  font-size: 12px;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  box-shadow: 0 2px 8px rgba(0,90,158,0.2);
+}
+.security-banner .sec-item { display: flex; align-items: center; gap: 5px; white-space: nowrap; }
+.security-banner .sec-check { font-size: 13px; }
+
+/* ========== Modules ========== */
+.module { display: none; padding: 24px 28px; }
+.module.active { display: block; }
+.module-header {
+  margin-bottom: 20px;
+}
+.module-header h1 {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.module-header .desc {
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin-top: 6px;
+}
+
+/* ========== Cards ========== */
+.card {
+  background: var(--card-bg);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  margin-bottom: 20px;
+  overflow: hidden;
+}
+.card-header {
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.card-header h2 {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text);
+}
+.card-header .card-icon { font-size: 20px; }
+.card-body { padding: 20px; }
+
+/* ========== Buttons ========== */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 18px;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s;
+  font-family: inherit;
+  white-space: nowrap;
+}
+.btn-primary { background: var(--primary); color: #fff; }
+.btn-primary:hover { background: var(--primary-dark); }
+.btn-secondary { background: #F3F2F1; color: var(--text); border-color: var(--border-strong); }
+.btn-secondary:hover { background: #EDEBE9; }
+.btn-danger { background: #fff; color: var(--error); border-color: var(--error); }
+.btn-danger:hover { background: #FDE7E9; }
+.btn-success { background: var(--success); color: #fff; }
+.btn-success:hover { background: #0B6A0B; }
+.btn:disabled { opacity: 0.45; cursor: not-allowed; }
+.btn-sm { padding: 4px 10px; font-size: 12px; }
+.option-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+.option-row label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  white-space: nowrap;
+}
+.select-input {
+  padding: 6px 10px;
+  border: 1px solid var(--border-strong);
+  border-radius: 4px;
+  font-size: 13px;
+  font-family: inherit;
+  background: #fff;
+  color: var(--text);
+  cursor: pointer;
+}
+.select-input:focus {
+  outline: none;
+  border-color: var(--primary);
+}
+.range-input {
+  flex: 1;
+  min-width: 120px;
+  max-width: 200px;
+  accent-color: var(--primary);
+}
+.range-value {
+  font-size: 12px;
+  color: var(--text-secondary);
+  min-width: 36px;
+}
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  cursor: pointer;
+  user-select: none;
+}
+.checkbox-label input { accent-color: var(--primary); width: 16px; height: 16px; }
+.preview-thumb {
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
+  border-radius: 4px;
+  border: 1px solid var(--border);
+}
+.btn-icon {
+  width: 28px; height: 28px; padding: 0;
+  justify-content: center;
+  border-radius: 4px;
+  background: transparent;
+  border: 1px solid transparent;
+  cursor: pointer;
+  font-size: 14px;
+  color: var(--text-secondary);
+  transition: all 0.15s;
+  display: inline-flex;
+  align-items: center;
+}
+.btn-icon:hover { background: #F3F2F1; border-color: var(--border); }
+.btn-icon.danger:hover { color: var(--error); background: #FDE7E9; }
+
+/* ========== Forms ========== */
+.form-group { margin-bottom: 16px; }
+.form-label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 6px;
+}
+.form-input, .form-textarea {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid var(--border-strong);
+  border-radius: 4px;
+  font-size: 14px;
+  font-family: inherit;
+  box-sizing: border-box;
+  transition: border-color 0.15s;
+  background: #fff;
+  color: var(--text);
+}
+.form-input:focus, .form-textarea:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 1px var(--primary);
+}
+.form-textarea { min-height: 70px; resize: vertical; line-height: 1.5; }
+.form-hint { font-size: 12px; color: var(--text-tertiary); margin-top: 4px; }
+
+/* ========== Drop Zone ========== */
+.drop-zone {
+  border: 2px dashed #C8C6C4;
+  border-radius: var(--radius-lg);
+  padding: 36px 20px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  background: #FAFAFA;
+}
+.drop-zone:hover { border-color: var(--primary); background: #F8FBFF; }
+.drop-zone.dragover {
+  border-color: var(--primary);
+  background: #E8F1FA;
+  transform: scale(1.01);
+}
+.drop-zone .dz-icon { font-size: 42px; margin-bottom: 10px; }
+.drop-zone .dz-text { font-size: 15px; color: var(--text); font-weight: 500; }
+.drop-zone .dz-sub { font-size: 12px; color: var(--text-tertiary); margin-top: 6px; }
+
+/* ========== File Stats ========== */
+.file-stats {
+  display: flex;
+  gap: 16px;
+  margin: 16px 0;
+  flex-wrap: wrap;
+}
+.stat-pill {
+  background: #F3F2F1;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 13px;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.stat-pill strong { color: var(--text); font-weight: 600; }
+
+/* ========== Image Preview Grid ========== */
+.preview-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 12px;
+  margin-top: 16px;
+}
+.preview-item {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: #fff;
+  position: relative;
+}
+.preview-item .preview-num {
+  position: absolute;
+  top: 4px; left: 4px;
+  background: rgba(0,120,212,0.9);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 7px;
+  border-radius: 3px;
+  z-index: 1;
+}
+.preview-item .preview-remove {
+  position: absolute;
+  top: 4px; right: 4px;
+  width: 20px; height: 20px;
+  background: rgba(0,0,0,0.5);
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+  transition: background 0.15s;
+}
+.preview-item .preview-remove:hover { background: var(--error); }
+.preview-item img {
+  width: 100%;
+  height: 110px;
+  object-fit: cover;
+  display: block;
+}
+.preview-item .preview-name {
+  padding: 6px 8px;
+  font-size: 11px;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ========== File Table ========== */
+.file-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 14px;
+  font-size: 13px;
+}
+.file-table th {
+  text-align: left;
+  padding: 8px 12px;
+  background: #F3F2F1;
+  color: var(--text-secondary);
+  font-weight: 600;
+  font-size: 12px;
+  border-bottom: 1px solid var(--border);
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+.file-table td {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--border);
+  color: var(--text);
+}
+.file-table tr:hover td { background: #FAFBFC; }
+.file-table .col-idx { width: 40px; text-align: center; color: var(--text-tertiary); }
+.file-table .col-actions { width: 110px; text-align: center; white-space: nowrap; }
+.file-table .col-size { width: 90px; text-align: right; color: var(--text-secondary); }
+.file-table .col-pages { width: 60px; text-align: center; color: var(--text-secondary); }
+
+/* ========== Progress ========== */
+.progress-container { margin-top: 16px; }
+.progress-bar-wrapper {
+  width: 100%;
+  height: 6px;
+  background: #EDEBE9;
+  border-radius: 3px;
+  overflow: hidden;
+}
+.progress-bar {
+  height: 100%;
+  background: var(--primary);
+  border-radius: 3px;
+  width: 0%;
+  transition: width 0.3s ease;
+}
+.progress-status {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin-top: 6px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* ========== Home Page ========== */
+.home-hero {
+  background: linear-gradient(135deg, #0078D4 0%, #005A9E 100%);
+  border-radius: var(--radius-lg);
+  padding: 36px 32px;
+  color: #fff;
+  margin-bottom: 24px;
+}
+.home-hero h1 { font-size: 28px; font-weight: 700; margin-bottom: 6px; }
+.home-hero p { font-size: 15px; opacity: 0.9; }
+.feature-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 16px;
+}
+.feature-card {
+  background: var(--card-bg);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  padding: 24px 20px;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: 1px solid transparent;
+}
+.feature-card:hover {
+  box-shadow: var(--shadow-md);
+  border-color: var(--primary);
+  transform: translateY(-2px);
+}
+.feature-card .fc-icon {
+  width: 44px; height: 44px;
+  border-radius: 10px;
+  background: #E8F1FA;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  margin-bottom: 14px;
+}
+.feature-card h3 { font-size: 16px; font-weight: 600; margin-bottom: 6px; color: var(--text); }
+.feature-card p { font-size: 13px; color: var(--text-secondary); line-height: 1.5; }
+
+/* ========== About Page ========== */
+.about-card {
+  max-width: 560px;
+  margin: 0 auto;
+  text-align: center;
+}
+.about-logo {
+  width: 72px; height: 72px;
+  margin: 0 auto 18px;
+  background: linear-gradient(135deg, #0078D4, #005A9E);
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 34px;
+  color: #fff;
+  box-shadow: 0 4px 16px rgba(0,120,212,0.3);
+}
+.about-title { font-size: 22px; font-weight: 700; color: var(--text); }
+.about-subtitle { font-size: 14px; color: var(--text-secondary); margin-top: 4px; }
+.about-version {
+  display: inline-block;
+  margin-top: 12px;
+  padding: 4px 14px;
+  background: #E8F1FA;
+  color: var(--primary-dark);
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+}
+.about-divider { height: 1px; background: var(--border); margin: 24px 0; }
+.about-info { text-align: left; }
+.about-info-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 14px;
+}
+.about-info-row:last-child { border-bottom: none; }
+.about-info-row .label { color: var(--text-secondary); }
+.about-info-row .value { color: var(--text); font-weight: 500; }
+.about-copyright {
+  margin-top: 20px;
+  font-size: 12px;
+  color: var(--text-tertiary);
+}
+
+/* ========== Error Overlay ========== */
+.error-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: #fff;
+  z-index: 9999;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+.error-overlay.show { display: flex; }
+.error-overlay .err-icon { font-size: 64px; margin-bottom: 20px; }
+.error-overlay .err-title { font-size: 24px; font-weight: 700; color: var(--error); margin-bottom: 10px; }
+.error-overlay .err-msg { font-size: 15px; color: var(--text-secondary); text-align: center; max-width: 440px; line-height: 1.6; }
+.error-overlay .err-detail {
+  margin-top: 20px;
+  padding: 16px 24px;
+  background: #FDE7E9;
+  border-radius: var(--radius);
+  font-size: 13px;
+  color: var(--error);
+  text-align: center;
+}
+
+/* ========== Toast ========== */
+.toast-container {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.toast {
+  padding: 12px 20px;
+  border-radius: var(--radius);
+  font-size: 14px;
+  color: #fff;
+  box-shadow: var(--shadow-md);
+  opacity: 0;
+  transform: translateX(100%);
+  transition: all 0.3s ease;
+  max-width: 380px;
+}
+.toast.show { opacity: 1; transform: translateX(0); }
+.toast-success { background: var(--success); }
+.toast-error { background: var(--error); }
+.toast-warning { background: var(--warning); }
+.toast-info { background: var(--primary); }
+
+/* ========== Responsive ========== */
+@media (max-width: 768px) {
+  .sidebar { width: 60px; }
+  .sidebar-header .logo, .sidebar-header .subtitle { display: none; }
+  .sidebar-footer { display: none; }
+  .nav-item span:not(.nav-icon) { display: none; }
+  .nav-item { justify-content: center; }
+  .module { padding: 16px; }
+  .security-banner { font-size: 11px; gap: 12px; padding: 8px 16px; }
+}
+.lang-switcher {
+  position: fixed;
+  top: 12px;
+  right: 16px;
+  z-index: 1000;
+  display: flex;
+  gap: 4px;
+  background: rgba(255,255,255,0.95);
+  border-radius: 20px;
+  padding: 4px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+.lang-btn {
+  padding: 4px 12px;
+  border: none;
+  border-radius: 16px;
+  font-size: 12px;
+  font-family: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  background: transparent;
+  color: var(--text-secondary);
+  transition: all 0.15s;
+}
+.lang-btn:hover { background: #E8F4FD; color: var(--primary); }
+.lang-btn.active { background: var(--primary); color: #fff; }
+</style>
+</head>
+<body>
+
+<!-- Language Switcher -->
+<div class="lang-switcher" id="langSwitcher">
+  <button class="lang-btn" data-lang="zh">中文</button>
+  <button class="lang-btn" data-lang="en">EN</button>
+  <button class="lang-btn" data-lang="vi">VN</button>
+  <button class="lang-btn" data-lang="ja">JP</button>
+</div>
+
+<!-- Error Overlay -->
+<div class="error-overlay" id="errorOverlay">
+  <div class="err-icon">&#9888;</div>
+  <div class="err-title" data-i18n="err_title">缺少 PDF 组件</div>
+  <div class="err-msg" data-i18n="err_msg">系统未能加载必要的 JavaScript 库，无法正常运行。请确认以下文件与 index.html 位于同一目录：</div>
+  <div class="err-detail">
+    jspdf.umd.min.js<br>
+    pdf-lib.min.js
+  </div>
+</div>
+
+<!-- Toast Container -->
+<div class="toast-container" id="toastContainer"></div>
+
+<div class="app-container">
+  <!-- Sidebar -->
+  <nav class="sidebar">
+    <div class="sidebar-header">
+      <div class="logo">Document Utility Center</div>
+      <div class="subtitle" data-i18n="subtitle">Document Utility Portal</div>
+    </div>
+    <ul class="nav-list" id="navList">
+      <li class="nav-item active" data-module="home">
+        <span class="nav-icon">&#127968;</span><span data-i18n="nav_home">首页</span>
+      </li>
+      <li class="nav-item" data-module="jpg-to-pdf">
+        <span class="nav-icon">&#128444;</span><span data-i18n="nav_jpg2pdf">JPG转PDF</span>
+      </li>
+      <li class="nav-item" data-module="pdf-merge">
+        <span class="nav-icon">&#128196;</span><span data-i18n="nav_merge">PDF合并</span>
+      </li>
+      <li class="nav-item" data-module="pdf-split">
+        <span class="nav-icon">&#9986;</span><span data-i18n="nav_split">PDF拆分</span>
+      </li>
+      <li class="nav-item" data-module="image-rename">
+        <span class="nav-icon">&#128248;</span><span data-i18n="nav_rename">图片批量重命名</span>
+      </li>
+      <li class="nav-item" data-module="a3-report">
+        <span class="nav-icon">&#128202;</span><span data-i18n="nav_a3">A3报告辅助工具</span>
+      </li>
+      <li class="nav-item" data-module="about">
+        <span class="nav-icon">&#8505;</span><span data-i18n="nav_about">关于系统</span>
+      </li>
+    </ul>
+    <div class="sidebar-footer">Enterprise Offline Edition v1.0</div>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <!-- Security Banner -->
+    <div class="security-banner">
+      <div class="sec-item"><span class="sec-check">&#9989;</span> <span data-i18n="sec_offline">完全离线运行</span></div>
+      <div class="sec-item"><span class="sec-check">&#9989;</span> <span data-i18n="sec_noupload">不上传服务器</span></div>
+      <div class="sec-item"><span class="sec-check">&#9989;</span> <span data-i18n="sec_nosave">不保存用户文件</span></div>
+      <div class="sec-item"><span class="sec-check">&#9989;</span> <span data-i18n="sec_local">所有处理均在本机浏览器完成</span></div>
+      <div class="sec-item"><span class="sec-check">&#9989;</span> <span data-i18n="sec_confidential">适用于保密资料</span></div>
+    </div>
+
+    <!-- ===== Module: Home ===== -->
+    <section id="module-home" class="module active">
+      <div class="home-hero">
+        <h1>Document Utility Center</h1>
+        <p data-i18n="home_title">企业级离线文档处理工具中心 &mdash; 离线运行，安全可靠</p>
+      </div>
+      <div class="feature-grid">
+        <div class="feature-card" data-go="jpg-to-pdf">
+          <div class="fc-icon">&#128444;</div>
+          <h3 data-i18n="nav_jpg2pdf">JPG转PDF</h3>
+          <p data-i18n="home_jpg2pdf">将JPG/JPEG图片批量转换为PDF文件，支持拖拽上传、自然排序与实时预览。</p>
+        </div>
+        <div class="feature-card" data-go="pdf-merge">
+          <div class="fc-icon">&#128196;</div>
+          <h3 data-i18n="nav_merge">PDF合并</h3>
+          <p data-i18n="home_merge">将多个PDF文件合并为一个，支持顺序调整、拖拽上传与进度显示。</p>
+        </div>
+        <div class="feature-card" data-go="pdf-split">
+          <div class="fc-icon">&#9986;</div>
+          <h3 data-i18n="nav_split">PDF拆分</h3>
+          <p data-i18n="home_split">按页码范围从PDF中提取指定页面，支持多段范围与格式验证。</p>
+        </div>
+        <div class="feature-card" data-go="image-rename">
+          <div class="fc-icon">&#128248;</div>
+          <h3 data-i18n="nav_rename">图片批量重命名</h3>
+          <p data-i18n="home_rename">批量重命名图片文件，三位编号自动生成，支持CSV清单导出。</p>
+        </div>
+        <div class="feature-card" data-go="a3-report">
+          <div class="fc-icon">&#128202;</div>
+          <h3 data-i18n="nav_a3">A3报告辅助工具</h3>
+          <p data-i18n="home_a3">填写各章节内容，一键生成企业标准A3格式PDF报告。</p>
+        </div>
+        <div class="feature-card" data-go="about">
+          <div class="fc-icon">&#8505;</div>
+          <h3 data-i18n="nav_about">关于系统</h3>
+          <p data-i18n="home_about">查看系统版本、开发者信息与版权声明。</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== Module: JPG to PDF ===== -->
+    <section id="module-jpg-to-pdf" class="module">
+      <div class="module-header">
+        <h1>&#128444; <span data-i18n="nav_jpg2pdf">JPG转PDF</span></h1>
+        <div class="desc" data-i18n="home_jpg2pdf">将JPG/JPEG图片批量转换为单个PDF文件，支持拖拽上传与自然排序</div>
+      </div>
+      <div class="card">
+        <div class="card-header"><span class="card-icon">&#128229;</span><h2 data-i18n="upload_images">上传图片</h2></div>
+        <div class="card-body">
+          <div class="drop-zone" id="jpgDropZone">
+            <div class="dz-icon">&#128444;</div>
+            <div class="dz-text" data-i18n="dz_jpg_text">点击或拖拽 JPG/JPEG 图片到此处</div>
+            <div class="dz-sub" data-i18n="dz_jpg_sub">支持批量上传 &middot; 支持JPG/JPEG格式</div>
+          </div>
+          <input type="file" id="jpgFileInput" accept=".jpg,.jpeg,image/jpeg" multiple style="display:none;">
+          <div class="file-stats" id="jpgStats" style="display:none;">
+            <div class="stat-pill">&#128196; <span data-i18n="img_count">图片数量：</span><strong id="jpgCount">0</strong></div>
+            <div class="stat-pill">&#128190; <span data-i18n="total_size">总容量：</span><strong id="jpgSize">0 MB</strong></div>
+          </div>
+          <div class="preview-grid" id="jpgPreviewGrid"></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header"><span class="card-icon">&#9881;</span><h2 data-i18n="output_settings">输出设置</h2></div>
+        <div class="card-body">
+          <div class="form-group">
+            <label class="form-label" data-i18n="pdf_filename">PDF文件名</label>
+            <input type="text" class="form-input" id="jpgFilename" placeholder="converted.pdf" value="converted.pdf">
+          </div>
+          <div style="display:flex;gap:12px;flex-wrap:wrap;">
+            <button class="btn btn-primary" id="jpgConvertBtn">&#128190; <span data-i18n="convert_pdf">转换为PDF</span></button>
+            <button class="btn btn-secondary" id="jpgClearBtn">&#128465; <span data-i18n="clear_list">清空列表</span></button>
+          </div>
+          <div class="progress-container" id="jpgProgressContainer" style="display:none;">
+            <div class="progress-bar-wrapper"><div class="progress-bar" id="jpgProgressBar"></div></div>
+            <div class="progress-status" id="jpgProgressStatus" data-i18n="preparing">准备中...</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== Module: PDF Merge ===== -->
+    <section id="module-pdf-merge" class="module">
+      <div class="module-header">
+        <h1>&#128196; <span data-i18n="nav_merge">PDF合并</span></h1>
+        <div class="desc" data-i18n="home_merge">将多个PDF文件合并为一个，支持顺序调整与进度显示</div>
+      </div>
+      <div class="card">
+        <div class="card-header"><span class="card-icon">&#128229;</span><h2 data-i18n="upload_pdfs">上传PDF文件</h2></div>
+        <div class="card-body">
+          <div class="drop-zone" id="mergeDropZone">
+            <div class="dz-icon">&#128196;</div>
+            <div class="dz-text" data-i18n="dz_merge_text">点击或拖拽 PDF 文件到此处</div>
+            <div class="dz-sub" data-i18n="dz_merge_sub">支持批量上传 &middot; 支持PDF格式</div>
+          </div>
+          <input type="file" id="mergeFileInput" accept=".pdf,application/pdf" multiple style="display:none;">
+          <div class="file-stats" id="mergeStats" style="display:none;">
+            <div class="stat-pill">&#128196; <span data-i18n="file_count">文件数：</span><strong id="mergeCount">0</strong></div>
+            <div class="stat-pill">&#128190; <span data-i18n="total_size">总大小：</span><strong id="mergeSize">0 MB</strong></div>
+            <div class="stat-pill">&#128209; <span data-i18n="total_pages">总页数：</span><strong id="mergePages">0</strong></div>
+          </div>
+          <table class="file-table" id="mergeTable" style="display:none;">
+            <thead><tr>
+              <th class="col-idx">#</th><th data-i18n="th_filename">文件名</th><th class="col-pages" data-i18n="col_pages">页数</th><th class="col-size" data-i18n="col_size">大小</th><th class="col-actions" data-i18n="col_actions">操作</th>
+            </tr></thead>
+            <tbody id="mergeFileList"></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header"><span class="card-icon">&#9881;</span><h2 data-i18n="output_settings">输出设置</h2></div>
+        <div class="card-body">
+          <div class="form-group">
+            <label class="form-label" data-i18n="output_filename">输出文件名</label>
+            <input type="text" class="form-input" id="mergeFilename" placeholder="Merged.pdf" value="Merged.pdf">
+          </div>
+          <div style="display:flex;gap:12px;flex-wrap:wrap;">
+            <button class="btn btn-primary" id="mergeBtn">&#128196; <span data-i18n="merge_pdf">合并PDF</span></button>
+            <button class="btn btn-secondary" id="mergeClearBtn">&#128465; <span data-i18n="clear_list">清空列表</span></button>
+          </div>
+          <div class="progress-container" id="mergeProgressContainer" style="display:none;">
+            <div class="progress-bar-wrapper"><div class="progress-bar" id="mergeProgressBar"></div></div>
+            <div class="progress-status" id="mergeProgressStatus" data-i18n="preparing">准备中...</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== Module: PDF Split ===== -->
+    <section id="module-pdf-split" class="module">
+      <div class="module-header">
+        <h1>&#9986; <span data-i18n="nav_split">PDF拆分</span></h1>
+        <div class="desc" data-i18n="home_split">按页码范围从PDF中提取指定页面</div>
+      </div>
+      <div class="card">
+        <div class="card-header"><span class="card-icon">&#128229;</span><h2 data-i18n="upload_pdfs">上传PDF文件</h2></div>
+        <div class="card-body">
+          <div class="drop-zone" id="splitDropZone">
+            <div class="dz-icon">&#128196;</div>
+            <div class="dz-text" data-i18n="dz_split_text">点击或拖拽 PDF 文件到此处</div>
+            <div class="dz-sub" data-i18n="dz_split_sub">仅支持单个PDF文件</div>
+          </div>
+          <input type="file" id="splitFileInput" accept=".pdf,application/pdf" style="display:none;">
+          <div id="splitFileInfo" style="display:none;margin-top:16px;">
+            <div class="file-stats">
+              <div class="stat-pill">&#128196; <span data-i18n="th_split_filename">文件名：</span><strong id="splitFileName">-</strong></div>
+              <div class="stat-pill">&#128209; <span data-i18n="th_split_pages">总页数：</span><strong id="splitTotalPages">0</strong></div>
+              <div class="stat-pill">&#128190; <span data-i18n="th_split_size">大小：</span><strong id="splitFileSize">0 MB</strong></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header"><span class="card-icon">&#9881;</span><h2 data-i18n="page_range">页码范围</h2></div>
+        <div class="card-body">
+          <div class="form-group">
+            <label class="form-label" data-i18n="range_label">输入页码范围（每行一个范围，每行输出一个独立PDF）</label>
+            <textarea class="form-textarea" id="splitRangeInput" rows="5" placeholder="1-10&#10;11-20&#10;21-50"></textarea>
+            <div class="form-hint" data-i18n="range_hint">每行一个范围，每个范围生成一个独立PDF文件，打包为ZIP下载。例如：1-10 表示提取第1至第10页</div>
+          </div>
+          <div style="display:flex;gap:12px;flex-wrap:wrap;">
+            <button class="btn btn-primary" id="splitBtn">&#9986; <span data-i18n="split_pdf">拆分PDF</span></button>
+            <button class="btn btn-secondary" id="splitClearBtn">&#128465; <span data-i18n="clear">清空</span></button>
+          </div>
+          <div class="progress-container" id="splitProgressContainer" style="display:none;">
+            <div class="progress-bar-wrapper"><div class="progress-bar" id="splitProgressBar"></div></div>
+            <div class="progress-status" id="splitProgressStatus" data-i18n="preparing">准备中...</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== Module: Image Rename ===== -->
+    <section id="module-image-rename" class="module">
+      <div class="module-header">
+        <h1>&#128248; <span data-i18n="nav_rename">图片批量重命名</span></h1>
+        <div class="desc" data-i18n="home_rename">批量重命名图片，三位编号自动生成，支持CSV清单导出</div>
+      </div>
+      <div class="card">
+        <div class="card-header"><span class="card-icon">&#128229;</span><h2 data-i18n="upload_images">上传图片</h2></div>
+        <div class="card-body">
+          <div class="drop-zone" id="renameDropZone">
+            <div class="dz-icon">&#128248;</div>
+            <div class="dz-text" data-i18n="dz_rename_text">点击或拖拽图片到此处</div>
+            <div class="dz-sub" data-i18n="dz_rename_sub">支持JPG/PNG/GIF/BMP等常见图片格式</div>
+          </div>
+          <input type="file" id="renameFileInput" accept="image/*" multiple style="display:none;">
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header"><span class="card-icon">&#9881;</span><h2 data-i18n="rename_settings">重命名设置</h2></div>
+        <div class="card-body">
+          <div class="form-group">
+            <label class="form-label" data-i18n="file_prefix">文件名前缀</label>
+            <input type="text" class="form-input" id="renamePrefix" placeholder="例如：动作经济原则" value="">
+            <div class="form-hint" data-i18n="prefix_hint">生成格式：前缀_001.jpg、前缀_002.jpg、前缀_003.jpg ...</div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" data-i18n="img_options">图片处理选项</label>
+            <div class="option-row">
+              <label data-i18n="compress_quality">压缩质量</label>
+              <select class="select-input" id="renameCompressSelect">
+                <option value="none" data-i18n="compress_none">不压缩（原始质量）</option>
+                <option value="0.9" data-i18n="compress_high">高质量（90%）</option>
+                <option value="0.7" selected data-i18n="compress_mid">中等压缩（70%）</option>
+                <option value="0.5" data-i18n="compress_low">高压缩（50%）</option>
+                <option value="0.3" data-i18n="compress_max">最高压缩（30%）</option>
+              </select>
+            </div>
+            <div class="option-row">
+              <label class="checkbox-label">
+                <input type="checkbox" id="renameRemoveBgCheck">
+                <span data-i18n="remove_bg">去除纯色背景（适用于白底/纯色背景的产品照）</span>
+              </label>
+            </div>
+            <div class="option-row" id="renameBgToleranceRow" style="display:none;">
+              <label data-i18n="bg_strength">背景去除强度</label>
+              <select class="select-input" id="renameBgToleranceSelect">
+                <option value="15" data-i18n="bg_conservative">保守（仅去除纯白背景）</option>
+                <option value="32" selected data-i18n="bg_standard">标准（白底/浅灰底，推荐）</option>
+                <option value="50" data-i18n="bg_strong">较强（去除浅色渐变背景）</option>
+                <option value="70" data-i18n="bg_aggressive">激进（可能误删浅色主体边缘）</option>
+              </select>
+            </div>
+            <div class="form-hint" id="renameBgHint" style="display:none;" data-i18n="bg_hint">
+              去除纯色背景适用于白底产品照。算法自动检测四角颜色作为背景色，强度越高去除范围越广。保守模式仅去除纯白像素，激进模式可能误删浅色物体边缘，请根据效果选择。
+            </div>
+          </div>
+
+          <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:16px;">
+            <button class="btn btn-primary" id="renamePreviewBtn">&#128065; <span data-i18n="preview">生成预览</span></button>
+            <button class="btn btn-success" id="renameDownloadBtn">&#11015; <span data-i18n="download_zip">打包下载ZIP</span></button>
+            <button class="btn btn-secondary" id="renameExportBtn">&#128190; <span data-i18n="export_csv">导出CSV</span></button>
+            <button class="btn btn-secondary" id="renameClearBtn">&#128465; <span data-i18n="clear">清空</span></button>
+          </div>
+          <div class="progress-container" id="renameProgressContainer" style="display:none;">
+            <div class="progress-bar-wrapper"><div class="progress-bar" id="renameProgressBar"></div></div>
+            <div class="progress-status" id="renameProgressStatus" data-i18n="preparing">准备中...</div>
+          </div>
+          <table class="file-table" id="renameTable" style="display:none;">
+            <thead><tr>
+              <th class="col-idx">#</th><th data-i18n="col_preview">预览</th><th data-i18n="col_old_name">原文件名</th><th data-i18n="col_new_name">新文件名</th><th class="col-size" data-i18n="col_size">原大小</th><th class="col-size" data-i18n="col_processed">处理后</th>
+            </tr></thead>
+            <tbody id="renamePreviewList"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== Module: A3 Report ===== -->
+    <section id="module-a3-report" class="module">
+      <div class="module-header">
+        <h1>&#128202; <span data-i18n="nav_a3">A3报告辅助工具</span></h1>
+        <div class="desc" data-i18n="home_a3">填写各章节内容，生成企业标准A3格式PDF报告</div>
+      </div>
+      <div class="card">
+        <div class="card-header"><span class="card-icon">&#9999;</span><h2 data-i18n="report_content">报告内容</h2></div>
+        <div class="card-body">
+          <div class="form-group">
+            <label class="form-label" data-i18n="topic_name">课题名称</label>
+            <input type="text" class="form-input" id="a3Title" placeholder="请输入课题名称">
+          </div>
+          <div class="form-group">
+            <label class="form-label" data-i18n="current_state">现状</label>
+            <textarea class="form-textarea" id="a3CurrentState" rows="4" placeholder="描述当前现状..."></textarea>
+          </div>
+          <div class="form-group">
+            <label class="form-label" data-i18n="target">目标</label>
+            <textarea class="form-textarea" id="a3Target" rows="3" placeholder="描述改善目标..."></textarea>
+          </div>
+          <div class="form-group">
+            <label class="form-label" data-i18n="cause_analysis">原因分析</label>
+            <textarea class="form-textarea" id="a3CauseAnalysis" rows="5" placeholder="分析根本原因..."></textarea>
+          </div>
+          <div class="form-group">
+            <label class="form-label" data-i18n="countermeasure">对策</label>
+            <textarea class="form-textarea" id="a3Countermeasure" rows="5" placeholder="列出改善对策..."></textarea>
+          </div>
+          <div class="form-group">
+            <label class="form-label" data-i18n="effect_verification">效果确认</label>
+            <textarea class="form-textarea" id="a3EffectVerification" rows="3" placeholder="确认改善效果..."></textarea>
+          </div>
+          <div class="form-group">
+            <label class="form-label" data-i18n="standardization">标准化</label>
+            <textarea class="form-textarea" id="a3Standardization" rows="3" placeholder="标准化措施..."></textarea>
+          </div>
+          <div style="display:flex;gap:12px;flex-wrap:wrap;">
+            <button class="btn btn-primary" id="a3GenerateBtn">&#128202; <span data-i18n="generate_a3">生成A3报告</span></button>
+            <button class="btn btn-secondary" id="a3LoadExampleBtn">&#128214; <span data-i18n="load_example">填入示例案例</span></button>
+            <button class="btn btn-secondary" id="a3ClearBtn">&#128465; <span data-i18n="clear_form">清空表单</span></button>
+          </div>
+          <div class="progress-container" id="a3ProgressContainer" style="display:none;">
+            <div class="progress-bar-wrapper"><div class="progress-bar" id="a3ProgressBar"></div></div>
+            <div class="progress-status" id="a3ProgressStatus" data-i18n="preparing">准备中...</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== Module: About ===== -->
+    <section id="module-about" class="module">
+      <div class="module-header">
+        <h1>&#8505; <span data-i18n="about_title">关于系统</span></h1>
+        <div class="desc" data-i18n="about_desc">系统版本与开发者信息</div>
+      </div>
+      <div class="card">
+        <div class="card-body about-card">
+          <div class="about-logo">&#128196;</div>
+          <div class="about-title">Document Utility Center</div>
+          <div class="about-subtitle">Enterprise Offline Edition</div>
+          <div class="about-version">Version 1.0</div>
+          <div class="about-divider"></div>
+          <div class="about-info">
+            <div class="about-info-row"><span class="label" data-i18n="about_developer">开发者</span><span class="value">卢耀辉 (Lu Yao Hui)</span></div>
+            <div class="about-info-row"><span class="label" data-i18n="about_signature">署名</span><span class="value">Beshinde Document Utility Center</span></div>
+            <div class="about-info-row"><span class="label" data-i18n="about_arch">技术架构</span><span class="value">HTML5 + Vanilla JavaScript + jsPDF + PDF-LIB</span></div>
+            <div class="about-info-row"><span class="label" data-i18n="about_env">运行环境</span><span class="value">Microsoft Edge (离线)</span></div>
+            <div class="about-info-row"><span class="label" data-i18n="about_limit">文件限制</span><span class="value" data-i18n="th_rename_limit">单文件500MB / PDF 1000页 / 图片500张</span></div>
+          </div>
+          <div class="about-divider"></div>
+          <div class="about-info">
+            <div class="about-info-row"><span class="label" data-i18n="about_pdf_sec">PDF安全</span><span class="value" data-i18n="about_pdf_sec_val">输出PDF不含JavaScript、不嵌入附件</span></div>
+            <div class="about-info-row"><span class="label" data-i18n="about_data_sec">数据安全</span><span class="value" data-i18n="about_data_sec_val">完全离线运行，不上传任何文件</span></div>
+            <div class="about-info-row"><span class="label" data-i18n="about_license">许可类型</span><span class="value" data-i18n="about_license_val">离线使用许可</span></div>
+          </div>
+          <div class="about-divider"></div>
+          <div class="about-info">
+            <div class="about-info-row"><span class="label">jsPDF</span><span class="value">MIT License (c) James Hall</span></div>
+            <div class="about-info-row"><span class="label">PDF-LIB</span><span class="value">MIT License (c) Andrew Dillon</span></div>
+            <div class="about-info-row"><span class="label" data-i18n="about_full_notice">完整声明</span><span class="value" data-i18n="about_full_notice_val">见同目录 LICENSE 文件</span></div>
+          </div>
+          <div class="about-divider"></div>
+          <div style="font-size:12px;color:var(--text-tertiary);line-height:1.6;text-align:left;">
+            <strong data-i18n="about_review_title">第三方库安全审查：</strong><span data-i18n="about_review_body">每年至少审查一次 jsPDF 和 PDF-LIB 的最新版本及已知漏洞(CVE)。<br>审查方法：访问各项目 GitHub Releases 和 Security Advisories 页面，如有高危漏洞则下载最新版本替换库文件。<br>审查记录请保存至 LICENSE 文件末尾。</span>
+          </div>
+          <div class="about-copyright">&copy; Beshinde Document Utility Center</div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<script src="jspdf.umd.min.js"></script>
+<script src="pdf-lib.min.js"></script>
+<script>
+"use strict";
+
+// ============================================
+// i18n - Internationalization System
+// ============================================
+var I18N = {
+  zh: {
+    subtitle: "Document Utility Portal",
+    nav_home: "首页", nav_jpg2pdf: "JPG转PDF", nav_merge: "PDF合并",
+    nav_split: "PDF拆分", nav_rename: "图片批量重命名",
+    nav_a3: "A3报告辅助工具", nav_about: "关于系统",
+    sec_offline: "完全离线运行", sec_noupload: "不上传服务器",
+    sec_nosave: "不保存用户文件", sec_local: "所有处理均在本机浏览器完成",
+    sec_confidential: "适用于保密资料",
+    home_title: "企业级离线文档处理工具中心 — 离线运行，安全可靠",
+    home_jpg2pdf: "将JPG/JPEG图片批量转换为PDF文件，支持拖拽上传、自然排序与实时预览。",
+    home_merge: "将多个PDF文件合并为一个，支持顺序调整、拖拽上传与进度显示。",
+    home_split: "按页码范围从PDF中提取指定页面，支持多段范围与格式验证。",
+    home_rename: "批量重命名图片文件，三位编号自动生成，支持CSV清单导出。",
+    home_a3: "填写各章节内容，一键生成企业标准A3格式PDF报告。",
+    home_about: "查看系统版本、开发者信息与版权声明。",
+    upload_images: "上传图片", upload_pdfs: "上传PDF文件",
+    dz_jpg_text: "点击或拖拽 JPG/JPEG 图片到此处",
+    dz_jpg_sub: "支持批量上传 · 支持JPG/JPEG格式",
+    dz_merge_text: "点击或拖拽 PDF 文件到此处",
+    dz_merge_sub: "支持批量上传 · 支持PDF格式",
+    dz_split_text: "点击或拖拽 PDF 文件到此处",
+    dz_split_sub: "仅支持单个PDF文件",
+    dz_rename_text: "点击或拖拽图片到此处",
+    dz_rename_sub: "支持JPG/PNG/GIF/BMP等常见图片格式",
+    img_count: "图片数量：", total_size: "总容量：",
+    file_count: "文件数：", total_pages: "总页数：",
+    output_settings: "输出设置", pdf_filename: "PDF文件名",
+    output_filename: "输出文件名", page_range: "页码范围",
+    convert_pdf: "转换为PDF", clear_list: "清空列表",
+    merge_pdf: "合并PDF", split_pdf: "拆分PDF",
+    rename_settings: "重命名设置", file_prefix: "文件名前缀",
+    prefix_hint: "生成格式：前缀_001.jpg、前缀_002.jpg、前缀_003.jpg ...",
+    img_options: "图片处理选项", compress_quality: "压缩质量",
+    compress_none: "不压缩（原始质量）", compress_high: "高质量（90%）",
+    compress_mid: "中等压缩（70%）", compress_low: "高压缩（50%）",
+    compress_max: "最高压缩（30%）",
+    remove_bg: "去除纯色背景（适用于白底/纯色背景的产品照）",
+    bg_strength: "背景去除强度",
+    bg_conservative: "保守（仅去除纯白背景）",
+    bg_standard: "标准（白底/浅灰底，推荐）",
+    bg_strong: "较强（去除浅色渐变背景）",
+    bg_aggressive: "激进（可能误删浅色主体边缘）",
+    bg_hint: "去除纯色背景适用于白底产品照。算法自动检测四角颜色作为背景色，强度越高去除范围越广。保守模式仅去除纯白像素，激进模式可能误删浅色物体边缘，请根据效果选择。",
+    preview: "生成预览", download_zip: "打包下载ZIP",
+    export_csv: "导出CSV", clear: "清空",
+    col_old_name: "原文件名", col_new_name: "新文件名",
+    col_size: "大小", col_pages: "页数", col_actions: "操作",
+    col_processed: "处理后", col_preview: "预览",
+    report_content: "报告内容", topic_name: "课题名称",
+    current_state: "现状", target: "目标",
+    cause_analysis: "原因分析", countermeasure: "对策",
+    effect_verification: "效果确认", standardization: "标准化",
+    generate_a3: "生成A3报告", load_example: "填入示例案例",
+    clear_form: "清空表单",
+    preparing: "准备中...",
+    about_title: "关于系统", about_desc: "系统版本与开发者信息",
+    about_developer: "开发者", about_signature: "署名",
+    about_arch: "技术架构", about_env: "运行环境",
+    about_limit: "文件限制", about_pdf_sec: "PDF安全",
+    about_pdf_sec_val: "输出PDF不含JavaScript、不嵌入附件",
+    about_data_sec: "数据安全", about_data_sec_val: "完全离线运行，不上传任何文件",
+    about_license: "许可类型", about_license_val: "离线使用许可",
+    about_full_notice: "完整声明", about_full_notice_val: "见同目录 LICENSE 文件",
+    about_review_title: "第三方库安全审查：",
+    about_review_body: "每年至少审查一次 jsPDF 和 PDF-LIB 的最新版本及已知漏洞(CVE)。<br>审查方法：访问各项目 GitHub Releases 和 Security Advisories 页面，如有高危漏洞则下载最新版本替换库文件。<br>审查记录请保存至 LICENSE 文件末尾。",
+    err_title: "缺少 PDF 组件",
+    err_msg: "系统未能加载必要的 JavaScript 库，无法正常运行。请确认以下文件与 index.html 位于同一目录：",
+    range_hint: "每行一个范围，每个范围生成一个独立PDF文件，打包为ZIP下载。例如：1-10 表示提取第1至第10页",
+    range_label: "输入页码范围（每行一个范围，每行输出一个独立PDF）",
+    // Toast messages
+    t_added_imgs: "已添加 {n} 张图片", t_added_pdfs: "已添加 {n} 个PDF文件",
+    t_cleared: "已清空", t_cleared_list: "已清空文件列表",
+    t_csv_exported: "CSV已导出", t_form_cleared: "表单已清空",
+    t_no_imgs: "请先上传图片", t_no_pdfs: "请先上传PDF文件",
+    t_no_range: "请输入页码范围", t_no_pdf: "请先上传PDF文件",
+    t_pdf_loaded: "PDF已加载，共 {n} 页", t_converting: "正在转换 {n} 张图片...",
+    t_pdf_converted: "PDF已转换: {name}", t_merged: "PDF已合并: {name}",
+    t_split_done: "已拆分为 {n} 个PDF文件，共 {p} 页",
+    t_split_single: "已提取 {n} 页，输出: {name}",
+    t_zip_done: "已打包下载 {n} 张图片", t_pack_failed: "打包失败: {msg}",
+    t_split_failed: "拆分失败: {msg}", t_merge_failed: "合并失败: {msg}",
+    t_convert_failed: "转换失败: {msg}", t_read_fail: "无法读取图片: {name}",
+    t_pdf_read_fail: "无法读取PDF: {name}", t_file_too_large: "文件超过500MB限制: {name} ({size})",
+    t_pages_exceed: "PDF页数超过1000页限制: {name} ({n}页)",
+    t_too_many_imgs: "图片总数不能超过500张",
+    t_uploaded_example: "已填入丰田车门安装不良率改善案例",
+    // Progress messages
+    p_processing_img: "正在处理图片 {n}/{total}...", p_adding_page: "正在添加第 {n}/{total} 页...",
+    p_processing_file: "正在处理第 {n}/{total} 个文件: {name}",
+    p_extracting: "正在提取页面...", p_packing: "正在打包ZIP...",
+    p_merging: "正在合并...", p_drawing: "正在绘制内容...",
+    p_done: "完成！", p_complete: "拆分完成！", p_merge_done: "合并完成！",
+    p_processing_range: "正在处理第 {n}/{total} 段 (页{start}-{end})...",
+    // Table headers
+    th_filename: "文件名", th_split_filename: "文件名：", th_split_pages: "总页数：",
+    th_split_size: "大小：", th_rename_limit: "单文件500MB / PDF 1000页 / 图片500张",
+    t_skip_nonpdf: "已跳过非PDF文件: {name}", t_no_pdf_dropped: "请上传PDF文件",
+    p_initializing: "正在初始化...", t_download_imgs: "正在下载 {n} 张图片...",
+    t_zip_too_many: "ZIP条目为空", t_zip_sig_fail: "ZIP签名校验失败",
+    t_zip_size_mismatch: "ZIP结构校验失败: 预期{n}字节, 实际{m}字节",
+    t_qc_fail: "QC检查失败: {msg}", t_upload_pdf_warning: "请上传PDF文件",
+    t_a3_generating: "正在生成A3报告...", t_a3_done: "A3报告已生成: A3_Report.pdf",
+    t_a3_failed: "生成失败: {msg}", t_no_extracted: "未提取到任何页面",
+    t_upload_imgs_warning: "请先上传图片", t_at_least_2: "请至少上传2个PDF文件",
+    t_remove_bg_hint: "去除纯色背景适用于白底产品照。算法自动检测四角颜色作为背景色，强度越高去除范围越广。保守模式仅去除纯白像素，激进模式可能误删浅色物体边缘，请根据效果选择。",
+    t_process_fail: "处理失败", p_packing_zip: "正在打包..."
+  },
+  en: {
+    subtitle: "Document Utility Portal",
+    nav_home: "Home", nav_jpg2pdf: "JPG to PDF", nav_merge: "PDF Merge",
+    nav_split: "PDF Split", nav_rename: "Batch Image Rename",
+    nav_a3: "A3 Report Tool", nav_about: "About",
+    sec_offline: "Fully offline", sec_noupload: "No server upload",
+    sec_nosave: "No file storage", sec_local: "All processing in browser",
+    sec_confidential: "For confidential documents",
+    home_title: "Enterprise offline document tool center — Offline, secure, reliable",
+    home_jpg2pdf: "Batch convert JPG/JPEG images to PDF with drag-drop upload, natural sorting and live preview.",
+    home_merge: "Merge multiple PDF files into one with order adjustment, drag-drop upload and progress display.",
+    home_split: "Extract specific pages from PDF by page ranges, supporting multiple ranges and format validation.",
+    home_rename: "Batch rename image files with auto-generated 3-digit numbering and CSV export.",
+    home_a3: "Fill in sections and generate enterprise standard A3 format PDF report in one click.",
+    home_about: "View system version, developer info and copyright notice.",
+    upload_images: "Upload Images", upload_pdfs: "Upload PDF Files",
+    dz_jpg_text: "Click or drag JPG/JPEG images here",
+    dz_jpg_sub: "Batch upload supported · JPG/JPEG format",
+    dz_merge_text: "Click or drag PDF files here",
+    dz_merge_sub: "Batch upload supported · PDF format",
+    dz_split_text: "Click or drag a PDF file here",
+    dz_split_sub: "Single PDF file only",
+    dz_rename_text: "Click or drag images here",
+    dz_rename_sub: "JPG/PNG/GIF/BMP and other common formats",
+    img_count: "Image count: ", total_size: "Total size: ",
+    file_count: "Files: ", total_pages: "Total pages: ",
+    output_settings: "Output Settings", pdf_filename: "PDF filename",
+    output_filename: "Output filename", page_range: "Page Range",
+    convert_pdf: "Convert to PDF", clear_list: "Clear list",
+    merge_pdf: "Merge PDF", split_pdf: "Split PDF",
+    rename_settings: "Rename Settings", file_prefix: "Filename prefix",
+    prefix_hint: "Format: prefix_001.jpg, prefix_002.jpg, prefix_003.jpg ...",
+    img_options: "Image Options", compress_quality: "Compression quality",
+    compress_none: "No compression (original)", compress_high: "High quality (90%)",
+    compress_mid: "Medium compression (70%)", compress_low: "High compression (50%)",
+    compress_max: "Maximum compression (30%)",
+    remove_bg: "Remove solid background (for white/solid background product photos)",
+    bg_strength: "Background removal strength",
+    bg_conservative: "Conservative (white background only)",
+    bg_standard: "Standard (white/light gray, recommended)",
+    bg_strong: "Strong (light gradient backgrounds)",
+    bg_aggressive: "Aggressive (may remove light subject edges)",
+    bg_hint: "Suitable for white-background product photos. Algorithm detects corner colors as background. Higher strength removes more. Conservative mode only removes pure white; aggressive may remove light object edges.",
+    preview: "Generate Preview", download_zip: "Download ZIP",
+    export_csv: "Export CSV", clear: "Clear",
+    col_old_name: "Original Name", col_new_name: "New Name",
+    col_size: "Size", col_pages: "Pages", col_actions: "Actions",
+    col_processed: "Processed", col_preview: "Preview",
+    report_content: "Report Content", topic_name: "Topic",
+    current_state: "Current State", target: "Target",
+    cause_analysis: "Root Cause Analysis", countermeasure: "Countermeasures",
+    effect_verification: "Effect Verification", standardization: "Standardization",
+    generate_a3: "Generate A3 Report", load_example: "Load Example Case",
+    clear_form: "Clear Form",
+    preparing: "Preparing...",
+    about_title: "About", about_desc: "System version and developer info",
+    about_developer: "Developer", about_signature: "Signature",
+    about_arch: "Architecture", about_env: "Environment",
+    about_limit: "File Limits", about_pdf_sec: "PDF Security",
+    about_pdf_sec_val: "Output PDFs contain no JavaScript, no embedded attachments",
+    about_data_sec: "Data Security", about_data_sec_val: "Fully offline, no file upload",
+    about_license: "License", about_license_val: "Offline use license",
+    about_full_notice: "Full Notice", about_full_notice_val: "See LICENSE file in same directory",
+    about_review_title: "Third-party library security review:",
+    about_review_body: "Review jsPDF and PDF-LIB latest versions and known vulnerabilities (CVE) at least annually.<br>Method: Visit each project's GitHub Releases and Security Advisories pages. Replace library files if high-risk vulnerabilities are found.<br>Save review records at the end of the LICENSE file.",
+    err_title: "Missing PDF Components",
+    err_msg: "Required JavaScript libraries failed to load. Please confirm these files are in the same directory as index.html:",
+    range_hint: "One range per line, each range generates an independent PDF, packed as ZIP. e.g. 1-10 extracts pages 1 to 10",
+    range_label: "Enter page ranges (one per line, each line outputs a separate PDF)",
+    t_added_imgs: "Added {n} images", t_added_pdfs: "Added {n} PDF files",
+    t_cleared: "Cleared", t_cleared_list: "File list cleared",
+    t_csv_exported: "CSV exported", t_form_cleared: "Form cleared",
+    t_no_imgs: "Please upload images first", t_no_pdfs: "Please upload PDF files first",
+    t_no_range: "Please enter page range", t_no_pdf: "Please upload a PDF file first",
+    t_pdf_loaded: "PDF loaded, {n} pages", t_converting: "Converting {n} images...",
+    t_pdf_converted: "PDF converted: {name}", t_merged: "PDF merged: {name}",
+    t_split_done: "Split into {n} PDF files, {p} pages total",
+    t_split_single: "Extracted {n} pages, output: {name}",
+    t_zip_done: "Downloaded {n} images as ZIP", t_pack_failed: "Pack failed: {msg}",
+    t_split_failed: "Split failed: {msg}", t_merge_failed: "Merge failed: {msg}",
+    t_convert_failed: "Conversion failed: {msg}", t_read_fail: "Cannot read image: {name}",
+    t_pdf_read_fail: "Cannot read PDF: {name}", t_file_too_large: "File exceeds 500MB limit: {name} ({size})",
+    t_pages_exceed: "PDF exceeds 1000 page limit: {name} ({n} pages)",
+    t_too_many_imgs: "Total images cannot exceed 500",
+    t_uploaded_example: "Loaded Toyota door installation defect improvement case",
+    p_processing_img: "Processing image {n}/{total}...", p_adding_page: "Adding page {n}/{total}...",
+    p_processing_file: "Processing file {n}/{total}: {name}",
+    p_extracting: "Extracting pages...", p_packing: "Packing ZIP...",
+    p_merging: "Merging...", p_drawing: "Drawing content...",
+    p_done: "Done!", p_complete: "Split complete!", p_merge_done: "Merge complete!",
+    p_processing_range: "Processing segment {n}/{total} (pages {start}-{end})...",
+    th_filename: "Filename", th_split_filename: "Filename: ", th_split_pages: "Total pages: ",
+    th_split_size: "Size: ", th_rename_limit: "Per file 500MB / PDF 1000 pages / 500 images",
+    t_skip_nonpdf: "Skipped non-PDF file: {name}", t_no_pdf_dropped: "Please upload a PDF file",
+    p_initializing: "Initializing...", t_download_imgs: "Downloading {n} images...",
+    t_zip_too_many: "ZIP entries empty", t_zip_sig_fail: "ZIP signature verification failed",
+    t_zip_size_mismatch: "ZIP structure mismatch: expected {n} bytes, got {m} bytes",
+    t_qc_fail: "QC check failed: {msg}", t_upload_pdf_warning: "Please upload a PDF file",
+    t_a3_generating: "Generating A3 report...", t_a3_done: "A3 report generated: A3_Report.pdf",
+    t_a3_failed: "Generation failed: {msg}", t_no_extracted: "No pages extracted",
+    t_upload_imgs_warning: "Please upload images first", t_at_least_2: "Please upload at least 2 PDF files",
+    t_remove_bg_hint: "Suitable for white-background product photos. Algorithm detects corner colors as background. Higher strength removes more. Conservative mode only removes pure white; aggressive may remove light object edges.",
+    t_process_fail: "Processing failed", p_packing_zip: "Packing..."
+  },
+  vi: {
+    subtitle: "Cổng Tiện Ích Tài Liệu",
+    nav_home: "Trang chủ", nav_jpg2pdf: "JPG sang PDF", nav_merge: "Gộp PDF",
+    nav_split: "Tách PDF", nav_rename: "Đổi tên ảnh hàng loạt",
+    nav_a3: "Công cụ Báo cáo A3", nav_about: "Giới thiệu",
+    sec_offline: "Hoạt động ngoại tuyến", sec_noupload: "Không tải lên máy chủ",
+    sec_nosave: "Không lưu tệp người dùng", sec_local: "Xử lý trên trình duyệt",
+    sec_confidential: "Dành cho tài liệu mật",
+    home_title: "Trung tâm công cụ tài liệu ngoại tuyến doanh nghiệp — Ngoại tuyến, an toàn, đáng tin cậy",
+    home_jpg2pdf: "Chuyển đổi hàng loạt ảnh JPG/JPEG sang PDF, hỗ trợ kéo thả, sắp xếp tự nhiên và xem trước.",
+    home_merge: "Gộp nhiều tệp PDF thành một, hỗ trợ điều chỉnh thứ tự, kéo thả và hiển thị tiến trình.",
+    home_split: "Trích xuất trang cụ thể từ PDF theo khoảng trang, hỗ trợ nhiều khoảng và kiểm tra định dạng.",
+    home_rename: "Đổi tên ảnh hàng loạt với số thứ tự 3 chữ số tự động, hỗ trợ xuất CSV.",
+    home_a3: "Điền nội dung các phần và tạo báo cáo PDF định dạng A3 tiêu chuẩn doanh nghiệp.",
+    home_about: "Xem phiên bản hệ thống, thông tin nhà phát triển và bản quyền.",
+    upload_images: "Tải lên ảnh", upload_pdfs: "Tải lên tệp PDF",
+    dz_jpg_text: "Nhấp hoặc kéo ảnh JPG/JPEG vào đây",
+    dz_jpg_sub: "Hỗ trợ tải nhiều · Định dạng JPG/JPEG",
+    dz_merge_text: "Nhấp hoặc kéo tệp PDF vào đây",
+    dz_merge_sub: "Hỗ trợ tải nhiều · Định dạng PDF",
+    dz_split_text: "Nhấp hoặc kéo tệp PDF vào đây",
+    dz_split_sub: "Chỉ hỗ trợ một tệp PDF",
+    dz_rename_text: "Nhấp hoặc kéo ảnh vào đây",
+    dz_rename_sub: "Hỗ trợ JPG/PNG/GIF/BMP và các định dạng phổ biến",
+    img_count: "Số ảnh: ", total_size: "Tổng dung lượng: ",
+    file_count: "Số tệp: ", total_pages: "Tổng trang: ",
+    output_settings: "Cài đặt xuất", pdf_filename: "Tên tệp PDF",
+    output_filename: "Tên tệp xuất", page_range: "Khoảng trang",
+    convert_pdf: "Chuyển sang PDF", clear_list: "Xóa danh sách",
+    merge_pdf: "Gộp PDF", split_pdf: "Tách PDF",
+    rename_settings: "Cài đặt đổi tên", file_prefix: "Tiền tố tên tệp",
+    prefix_hint: "Định dạng: tiền tố_001.jpg, tiền tố_002.jpg, tiền tố_003.jpg ...",
+    img_options: "Tùy chọn ảnh", compress_quality: "Chất lượng nén",
+    compress_none: "Không nén (gốc)", compress_high: "Chất lượng cao (90%)",
+    compress_mid: "Nén trung bình (70%)", compress_low: "Nén cao (50%)",
+    compress_max: "Nén tối đa (30%)",
+    remove_bg: "Xóa nền đơn sắc (dành cho ảnh sản phẩm nền trắng/đơn sắc)",
+    bg_strength: "Cường độ xóa nền",
+    bg_conservative: "Bảo thủ (chỉ xóa nền trắng)",
+    bg_standard: "Tiêu chuẩn (nền trắng/xám nhạt, khuyến nghị)",
+    bg_strong: "Mạnh (xóa nền gradient nhạt)",
+    bg_aggressive: "Quá mức (có thể xóa cạnh chủ thể nhạt)",
+    bg_hint: "Phù hợp cho ảnh sản phẩm nền trắng. Thuật toán phát hiện màu nền từ bốn góc. Cường độ càng cao xóa càng nhiều. Bảo thủ chỉ xóa pixel trắng; quá mức có thể xóa cạnh vật thể nhạt.",
+    preview: "Tạo xem trước", download_zip: "Tải xuống ZIP",
+    export_csv: "Xuất CSV", clear: "Xóa",
+    col_old_name: "Tên gốc", col_new_name: "Tên mới",
+    col_size: "Dung lượng", col_pages: "Trang", col_actions: "Thao tác",
+    col_processed: "Đã xử lý", col_preview: "Xem trước",
+    report_content: "Nội dung báo cáo", topic_name: "Tên đề tài",
+    current_state: "Hiện trạng", target: "Mục tiêu",
+    cause_analysis: "Phân tích nguyên nhân", countermeasure: "Đối sách",
+    effect_verification: "Xác nhận hiệu quả", standardization: "Tiêu chuẩn hóa",
+    generate_a3: "Tạo báo cáo A3", load_example: "Nhập ví dụ mẫu",
+    clear_form: "Xóa biểu mẫu",
+    preparing: "Đang chuẩn bị...",
+    about_title: "Giới thiệu", about_desc: "Phiên bản hệ thống và thông tin nhà phát triển",
+    about_developer: "Nhà phát triển", about_signature: "Ký tên",
+    about_arch: "Kiến trúc", about_env: "Môi trường",
+    about_limit: "Giới hạn tệp", about_pdf_sec: "Bảo mật PDF",
+    about_pdf_sec_val: "PDF xuất không chứa JavaScript, không nhúng tệp đính kèm",
+    about_data_sec: "Bảo mật dữ liệu", about_data_sec_val: "Hoạt động ngoại tuyến hoàn toàn, không tải tệp lên",
+    about_license: "Giấy phép", about_license_val: "Giấy phép sử dụng ngoại tuyến",
+    about_full_notice: "Thông báo đầy đủ", about_full_notice_val: "Xem tệp LICENSE trong cùng thư mục",
+    about_review_title: "Kiểm tra bảo mật thư viện bên thứ ba:",
+    about_review_body: "Kiểm tra phiên bản mới nhất và lỗ hổng đã biết (CVE) của jsPDF và PDF-LIB ít nhất mỗi năm một lần.<br>Phương pháp: Truy cập trang GitHub Releases và Security Advisories của từng dự án. Thay thế tệp thư viện nếu tìm thấy lỗ hổng nguy hiểm cao.<br>Lưu hồ sơ kiểm tra ở cuối tệp LICENSE.",
+    err_title: "Thiếu thành phần PDF",
+    err_msg: "Không thể tải thư viện JavaScript cần thiết. Vui lòng xác nhận các tệp sau nằm trong cùng thư mục với index.html:",
+    range_hint: "Mỗi dòng một khoảng, mỗi khoảng tạo một PDF riêng biệt, đóng gói ZIP. VD: 1-10 trích trang 1 đến 10",
+    range_label: "Nhập khoảng trang (mỗi dòng một khoảng, mỗi dòng xuất một PDF riêng)",
+    t_added_imgs: "Đã thêm {n} ảnh", t_added_pdfs: "Đã thêm {n} tệp PDF",
+    t_cleared: "Đã xóa", t_cleared_list: "Đã xóa danh sách tệp",
+    t_csv_exported: "Đã xuất CSV", t_form_cleared: "Đã xóa biểu mẫu",
+    t_no_imgs: "Vui lòng tải ảnh trước", t_no_pdfs: "Vui lòng tải tệp PDF trước",
+    t_no_range: "Vui lòng nhập khoảng trang", t_no_pdf: "Vui lòng tải tệp PDF trước",
+    t_pdf_loaded: "Đã tải PDF, {n} trang", t_converting: "Đang chuyển đổi {n} ảnh...",
+    t_pdf_converted: "Đã chuyển PDF: {name}", t_merged: "Đã gộp PDF: {name}",
+    t_split_done: "Đã tách thành {n} tệp PDF, {p} trang",
+    t_split_single: "Đã trích {n} trang, xuất: {name}",
+    t_zip_done: "Đã tải xuống {n} ảnh dạng ZIP", t_pack_failed: "Đóng gói thất bại: {msg}",
+    t_split_failed: "Tách thất bại: {msg}", t_merge_failed: "Gộp thất bại: {msg}",
+    t_convert_failed: "Chuyển đổi thất bại: {msg}", t_read_fail: "Không đọc được ảnh: {name}",
+    t_pdf_read_fail: "Không đọc được PDF: {name}", t_file_too_large: "Tệp vượt giới hạn 500MB: {name} ({size})",
+    t_pages_exceed: "PDF vượt giới hạn 1000 trang: {name} ({n} trang)",
+    t_too_many_imgs: "Tổng số ảnh không vượt quá 500",
+    t_uploaded_example: "Đã nhập ví dụ cải thiện tỷ lệ lỗi lắp cửa Toyota",
+    p_processing_img: "Đang xử lý ảnh {n}/{total}...", p_adding_page: "Đang thêm trang {n}/{total}...",
+    p_processing_file: "Đang xử lý tệp {n}/{total}: {name}",
+    p_extracting: "Đang trích xuất trang...", p_packing: "Đang đóng gói ZIP...",
+    p_merging: "Đang gộp...", p_drawing: "Đang vẽ nội dung...",
+    p_done: "Hoàn thành!", p_complete: "Tách hoàn tất!", p_merge_done: "Gộp hoàn tất!",
+    p_processing_range: "Đang xử lý đoạn {n}/{total} (trang {start}-{end})...",
+    th_filename: "Tên tệp", th_split_filename: "Tên tệp: ", th_split_pages: "Tổng trang: ",
+    th_split_size: "Dung lượng: ", th_rename_limit: "Mỗi tệp 500MB / PDF 1000 trang / 500 ảnh",
+    t_skip_nonpdf: "Đã bỏ qua tệp không phải PDF: {name}", t_no_pdf_dropped: "Vui lòng tải tệp PDF",
+    p_initializing: "Đang khởi tạo...", t_download_imgs: "Đang tải xuống {n} ảnh...",
+    t_zip_too_many: "Mục ZIP trống", t_zip_sig_fail: "Xác thực chữ ký ZIP thất bại",
+    t_zip_size_mismatch: "Cấu trúc ZIP sai: dự kiến {n} byte, thực tế {m} byte",
+    t_qc_fail: "Kiểm tra QC thất bại: {msg}", t_upload_pdf_warning: "Vui lòng tải tệp PDF",
+    t_a3_generating: "Đang tạo báo cáo A3...", t_a3_done: "Đã tạo báo cáo A3: A3_Report.pdf",
+    t_a3_failed: "Tạo thất bại: {msg}", t_no_extracted: "Không trích được trang nào",
+    t_upload_imgs_warning: "Vui lòng tải ảnh trước", t_at_least_2: "Vui lòng tải ít nhất 2 tệp PDF",
+    t_remove_bg_hint: "Phù hợp cho ảnh sản phẩm nền trắng. Thuật toán phát hiện màu nền từ bốn góc. Cường độ càng cao xóa càng nhiều. Bảo thủ chỉ xóa pixel trắng; quá mức có thể xóa cạnh vật thể nhạt.",
+    t_process_fail: "Xử lý thất bại", p_packing_zip: "Đang đóng gói..."
+  },
+  ja: {
+    subtitle: "ドキュメントユーティリティポータル",
+    nav_home: "ホーム", nav_jpg2pdf: "JPG→PDF", nav_merge: "PDF結合",
+    nav_split: "PDF分割", nav_rename: "画像一括リネーム",
+    nav_a3: "A3レポートツール", nav_about: "システム情報",
+    sec_offline: "完全オフライン", sec_noupload: "サーバーに送信しない",
+    sec_nosave: "ファイルを保存しない", sec_local: "全処理はブラウザ内で完結",
+    sec_confidential: "機密資料に適用",
+    home_title: "エンタープライズ向けオフラインドキュメント処理センター — オフライン、安全、信頼",
+    home_jpg2pdf: "JPG/JPEG画像を一括でPDFに変換。ドラッグアップロード、自然ソート、リアルタイムプレビュー対応。",
+    home_merge: "複数のPDFファイルを1つに結合。順序調整、ドラッグアップロード、進捗表示対応。",
+    home_split: "ページ範囲指定でPDFから特定ページを抽出。複数範囲対応、フォーマット検証付き。",
+    home_rename: "画像ファイルを一括リネーム。3桁連番自動生成、CSVエクスポート対応。",
+    home_a3: "各セクションを入力し、企業標準A3形式PDFレポートをワンクリック生成。",
+    home_about: "システムバージョン、開発者情報、著作権表示を確認。",
+    upload_images: "画像をアップロード", upload_pdfs: "PDFファイルをアップロード",
+    dz_jpg_text: "クリックまたはJPG/JPEG画像をドラッグ",
+    dz_jpg_sub: "一括アップロード対応 · JPG/JPEG形式",
+    dz_merge_text: "クリックまたはPDFファイルをドラッグ",
+    dz_merge_sub: "一括アップロード対応 · PDF形式",
+    dz_split_text: "クリックまたはPDFファイルをドラッグ",
+    dz_split_sub: "単一PDFファイルのみ",
+    dz_rename_text: "クリックまたは画像をドラッグ",
+    dz_rename_sub: "JPG/PNG/GIF/BMP等の一般的な画像形式対応",
+    img_count: "画像数：", total_size: "総容量：",
+    file_count: "ファイル数：", total_pages: "総ページ数：",
+    output_settings: "出力設定", pdf_filename: "PDFファイル名",
+    output_filename: "出力ファイル名", page_range: "ページ範囲",
+    convert_pdf: "PDFに変換", clear_list: "リストをクリア",
+    merge_pdf: "PDF結合", split_pdf: "PDF分割",
+    rename_settings: "リネーム設定", file_prefix: "ファイル名プレフィックス",
+    prefix_hint: "形式：プレフィックス_001.jpg、プレフィックス_002.jpg、プレフィックス_003.jpg ...",
+    img_options: "画像処理オプション", compress_quality: "圧縮品質",
+    compress_none: "圧縮なし（元の品質）", compress_high: "高品質（90%）",
+    compress_mid: "中圧縮（70%）", compress_low: "高圧縮（50%）",
+    compress_max: "最高圧縮（30%）",
+    remove_bg: "単色背景を削除（白背景/単色背景の製品写真向け）",
+    bg_strength: "背景削除強度",
+    bg_conservative: "控えめ（白背景のみ削除）",
+    bg_standard: "標準（白/薄灰背景、推奨）",
+    bg_strong: "強め（薄色グラデーション背景を削除）",
+    bg_aggressive: "積極的（薄色主体のエッジを削除する可能性）",
+    bg_hint: "白背景の製品写真に適用。アルゴリズムが四隅の色から背景色を検出。強度が高いほど削除範囲が広がります。控えめは純白ピクセルのみ削除、積極的は薄色物体のエッジを削除する可能性があります。",
+    preview: "プレビュー生成", download_zip: "ZIPダウンロード",
+    export_csv: "CSVエクスポート", clear: "クリア",
+    col_old_name: "元ファイル名", col_new_name: "新ファイル名",
+    col_size: "サイズ", col_pages: "ページ数", col_actions: "操作",
+    col_processed: "処理後", col_preview: "プレビュー",
+    report_content: "レポート内容", topic_name: "課題名",
+    current_state: "現状", target: "目標",
+    cause_analysis: "原因分析", countermeasure: "対策",
+    effect_verification: "効果確認", standardization: "標準化",
+    generate_a3: "A3レポート生成", load_example: "サンプル事例を入力",
+    clear_form: "フォームをクリア",
+    preparing: "準備中...",
+    about_title: "システム情報", about_desc: "システムバージョンと開発者情報",
+    about_developer: "開発者", about_signature: "署名",
+    about_arch: "技術構成", about_env: "実行環境",
+    about_limit: "ファイル制限", about_pdf_sec: "PDFセキュリティ",
+    about_pdf_sec_val: "出力PDFにJavaScriptを含まない、添付ファイルを埋め込まない",
+    about_data_sec: "データセキュリティ", about_data_sec_val: "完全オフライン、ファイルをアップロードしない",
+    about_license: "ライセンス", about_license_val: "オフライン使用ライセンス",
+    about_full_notice: "完全な声明", about_full_notice_val: "同ディレクトリのLICENSEファイルを参照",
+    about_review_title: "サードパーティライブラリセキュリティレビュー：",
+    about_review_body: "jsPDFとPDF-LIBの最新バージョンと既知の脆弱性（CVE）を年1回以上レビュー。<br>方法：各プロジェクトのGitHub ReleasesとSecurity Advisoriesページを確認。高危険度脆弱性がある場合は最新版でライブラリファイルを置換。<br>レビュー記録はLICENSEファイル末尾に保存。",
+    err_title: "PDFコンポーネントが不足",
+    err_msg: "必要なJavaScriptライブラリを読み込めませんでした。以下のファイルがindex.htmlと同じディレクトリにあることを確認してください：",
+    range_hint: "1行1範囲、各範囲で独立したPDFを生成しZIPでダウンロード。例：1-10は1〜10ページを抽出",
+    range_label: "ページ範囲を入力（1行1範囲、各行が独立したPDFを出力）",
+    t_added_imgs: "{n}枚の画像を追加", t_added_pdfs: "{n}個のPDFファイルを追加",
+    t_cleared: "クリアしました", t_cleared_list: "ファイルリストをクリア",
+    t_csv_exported: "CSVをエクスポート", t_form_cleared: "フォームをクリア",
+    t_no_imgs: "画像をアップロードしてください", t_no_pdfs: "PDFファイルをアップロードしてください",
+    t_no_range: "ページ範囲を入力してください", t_no_pdf: "PDFファイルをアップロードしてください",
+    t_pdf_loaded: "PDFを読み込み、{n}ページ", t_converting: "{n}枚の画像を変換中...",
+    t_pdf_converted: "PDFに変換: {name}", t_merged: "PDFを結合: {name}",
+    t_split_done: "{n}個のPDFに分割、{p}ページ",
+    t_split_single: "{n}ページを抽出、出力: {name}",
+    t_zip_done: "{n}枚の画像をZIPでダウンロード", t_pack_failed: "パッケージ失敗: {msg}",
+    t_split_failed: "分割失敗: {msg}", t_merge_failed: "結合失敗: {msg}",
+    t_convert_failed: "変換失敗: {msg}", t_read_fail: "画像を読み込めません: {name}",
+    t_pdf_read_fail: "PDFを読み込めません: {name}", t_file_too_large: "ファイルが500MBを超過: {name} ({size})",
+    t_pages_exceed: "PDFが1000ページを超過: {name} ({n}ページ)",
+    t_too_many_imgs: "画像の総数は500枚を超えないでください",
+    t_uploaded_example: "トヨタドア取り付け不良率改善事例を入力",
+    p_processing_img: "画像を処理中 {n}/{total}...", p_adding_page: "ページを追加中 {n}/{total}...",
+    p_processing_file: "ファイルを処理中 {n}/{total}: {name}",
+    p_extracting: "ページを抽出中...", p_packing: "ZIPをパッケージ中...",
+    p_merging: "結合中...", p_drawing: "コンテンツを描画中...",
+    p_done: "完了！", p_complete: "分割完了！", p_merge_done: "結合完了！",
+    p_processing_range: "セグメント {n}/{total} を処理中 (ページ{start}-{end})...",
+    th_filename: "ファイル名", th_split_filename: "ファイル名：", th_split_pages: "総ページ数：",
+    th_split_size: "サイズ：", th_rename_limit: "1ファイル500MB / PDF 1000ページ / 画像500枚",
+    t_skip_nonpdf: "非PDFファイルをスキップ: {name}", t_no_pdf_dropped: "PDFファイルをアップロードしてください",
+    p_initializing: "初期化中...", t_download_imgs: "{n}枚の画像をダウンロード中...",
+    t_zip_too_many: "ZIPエントリが空", t_zip_sig_fail: "ZIP署名検証失敗",
+    t_zip_size_mismatch: "ZIP構造不一致: 期待{n}バイト、実際{m}バイト",
+    t_qc_fail: "QCチェック失敗: {msg}", t_upload_pdf_warning: "PDFファイルをアップロードしてください",
+    t_a3_generating: "A3レポートを生成中...", t_a3_done: "A3レポートを生成: A3_Report.pdf",
+    t_a3_failed: "生成失敗: {msg}", t_no_extracted: "抽出されたページがありません",
+    t_upload_imgs_warning: "画像をアップロードしてください", t_at_least_2: "2つ以上のPDFファイルをアップロードしてください",
+    t_remove_bg_hint: "白背景の製品写真に適用。アルゴリズムが四隅の色から背景色を検出。強度が高いほど削除範囲が広がります。控えめは純白ピクセルのみ削除、積極的は薄色物体のエッジを削除する可能性があります。",
+    t_process_fail: "処理失敗", p_packing_zip: "パッケージ中..."
+  }
+};
+
+var currentLang = "zh";
+
+function t(key, params) {
+  var dict = I18N[currentLang] || I18N.zh;
+  var str = dict[key] || I18N.zh[key] || key;
+  if (params) {
+    for (var k in params) {
+      str = str.replace(new RegExp("\\{" + k + "\\}", "g"), params[k]);
+    }
+  }
+  return str;
+}
+
+function applyLanguage(lang) {
+  currentLang = lang;
+  document.documentElement.lang = lang === "zh" ? "zh-CN" : lang;
+  var elements = document.querySelectorAll("[data-i18n]");
+  for (var i = 0; i < elements.length; i++) {
+    var key = elements[i].getAttribute("data-i18n");
+    var val = t(key);
+    if (elements[i].tagName === "INPUT" || elements[i].tagName === "TEXTAREA") {
+      elements[i].placeholder = val;
+    } else {
+      elements[i].textContent = val;
+    }
+  }
+  var btns = document.querySelectorAll(".lang-btn");
+  for (var b = 0; b < btns.length; b++) {
+    btns[b].classList.toggle("active", btns[b].getAttribute("data-lang") === lang);
+  }
+  try { localStorage.setItem("duc_lang", lang); } catch (e) {}
+  if (typeof onLanguageChange === "function") onLanguageChange(lang);
+}
+
+// ============================================
+// Utility Functions
+// ============================================
+function formatBytes(bytes) {
+  if (bytes === 0) return "0 B";
+  var k = 1024;
+  var sizes = ["B", "KB", "MB", "GB"];
+  var i = Math.floor(Math.log(bytes) / Math.log(k));
+  return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
+}
+
+function formatMB(bytes) {
+  return (bytes / (1024 * 1024)).toFixed(2) + " MB";
+}
+
+function showToast(message, type) {
+  type = type || "info";
+  var container = document.getElementById("toastContainer");
+  var toast = document.createElement("div");
+  toast.className = "toast toast-" + type;
+  toast.textContent = message;
+  container.appendChild(toast);
+  setTimeout(function() { toast.classList.add("show"); }, 10);
+  setTimeout(function() {
+    toast.classList.remove("show");
+    setTimeout(function() { if (toast.parentNode) toast.parentNode.removeChild(toast); }, 300);
+  }, 3500);
+}
+
+function downloadBlob(blob, filename) {
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(function() { URL.revokeObjectURL(url); }, 100);
+}
+
+var MAX_FILE_SIZE = 500 * 1024 * 1024;
+var MAX_PDF_PAGES = 1000;
+var MAX_IMAGE_COUNT = 500;
+
+function validateFileSize(file) {
+  if (file.size > MAX_FILE_SIZE) {
+    showToast(t("t_file_too_large", {name: file.name, size: formatMB(file.size)}), "error");
+    return false;
+  }
+  return true;
+}
+
+function validatePdfPages(pageCount, filename) {
+  if (pageCount > MAX_PDF_PAGES) {
+    showToast(t("t_pages_exceed", {name: (filename || ""), n: pageCount}), "error");
+    return false;
+  }
+  return true;
+}
+
+async function savePdfSecure(pdfDoc) {
+  return await pdfDoc.save({
+    useObjectStreams: false,
+    addDefaultPage: false
+  });
+}
+
+function readFileAsArrayBuffer(file) {
+  return new Promise(function(resolve, reject) {
+    var reader = new FileReader();
+    reader.onload = function() { resolve(reader.result); };
+    reader.onerror = function() { reject(new Error("文件读取失败")); };
+    reader.readAsArrayBuffer(file);
+  });
+}
+
+function readFileAsDataURL(file) {
+  return new Promise(function(resolve, reject) {
+    var reader = new FileReader();
+    reader.onload = function() { resolve(reader.result); };
+    reader.onerror = function() { reject(new Error("文件读取失败")); };
+    reader.readAsDataURL(file);
+  });
+}
+
+function loadImage(src) {
+  return new Promise(function(resolve, reject) {
+    var img = new Image();
+    img.onload = function() { resolve(img); };
+    img.onerror = function() { reject(new Error("图片加载失败")); };
+    img.src = src;
+  });
+}
+
+function setProgress(barId, statusId, percent, statusText) {
+  var bar = document.getElementById(barId);
+  var status = document.getElementById(statusId);
+  if (bar) bar.style.width = percent + "%";
+  if (status && statusText) status.textContent = statusText;
+}
+
+function showProgress(containerId) {
+  var el = document.getElementById(containerId);
+  if (el) el.style.display = "block";
+}
+
+function hideProgress(containerId) {
+  var el = document.getElementById(containerId);
+  if (el) el.style.display = "none";
+}
+
+// ============================================
+// Navigation System
+// ============================================
+function switchModule(moduleId) {
+  var modules = document.querySelectorAll(".module");
+  for (var i = 0; i < modules.length; i++) {
+    modules[i].classList.remove("active");
+  }
+  var target = document.getElementById("module-" + moduleId);
+  if (target) target.classList.add("active");
+
+  var navItems = document.querySelectorAll(".nav-item");
+  for (var j = 0; j < navItems.length; j++) {
+    navItems[j].classList.remove("active");
+    if (navItems[j].getAttribute("data-module") === moduleId) {
+      navItems[j].classList.add("active");
+    }
+  }
+  document.querySelector(".main-content").scrollTop = 0;
+}
+
+// ============================================
+// Module 1: JPG to PDF
+// ============================================
+var jpgFiles = [];
+
+function initJpgToPdf() {
+  var dropZone = document.getElementById("jpgDropZone");
+  var fileInput = document.getElementById("jpgFileInput");
+
+  dropZone.addEventListener("click", function() { fileInput.click(); });
+  fileInput.addEventListener("change", function(e) {
+    var files = Array.from(e.target.files);
+    fileInput.value = "";
+    handleJpgFiles(files);
+  });
+
+  setupDragDrop(dropZone, function(files) {
+    var filtered = [];
+    for (var i = 0; i < files.length; i++) {
+      var f = files[i];
+      if (f.type === "image/jpeg" || /\.(jpg|jpeg)$/i.test(f.name)) {
+        filtered.push(f);
+      } else {
+        showToast(t("t_skip_nonpdf", {name: f.name}), "warning");
+      }
+    }
+    handleJpgFiles(filtered);
+  });
+
+  document.getElementById("jpgConvertBtn").addEventListener("click", convertJpgToPdf);
+  document.getElementById("jpgClearBtn").addEventListener("click", clearJpgFiles);
+}
+
+function setupDragDrop(dropZone, handler) {
+  dropZone.addEventListener("dragenter", function(e) {
+    e.preventDefault();
+    dropZone.classList.add("dragover");
+  });
+  dropZone.addEventListener("dragover", function(e) {
+    e.preventDefault();
+    dropZone.classList.add("dragover");
+  });
+  dropZone.addEventListener("dragleave", function(e) {
+    e.preventDefault();
+    if (e.target === dropZone) dropZone.classList.remove("dragover");
+  });
+  dropZone.addEventListener("drop", function(e) {
+    e.preventDefault();
+    dropZone.classList.remove("dragover");
+    if (e.dataTransfer && e.dataTransfer.files.length > 0) {
+      handler(e.dataTransfer.files);
+    }
+  });
+}
+
+async function handleJpgFiles(files) {
+  if (!files || files.length === 0) return;
+  if (jpgFiles.length + files.length > MAX_IMAGE_COUNT) {
+    showToast(t("t_too_many_imgs"), "error");
+    return;
+  }
+  var added = 0;
+  for (var i = 0; i < files.length; i++) {
+    var f = files[i];
+    if (!validateFileSize(f)) continue;
+    try {
+      var dataUrl = await readFileAsDataURL(f);
+      jpgFiles.push({ file: f, name: f.name, size: f.size, dataUrl: dataUrl });
+      added++;
+    } catch (err) {
+      showToast(t("t_read_fail", {name: f.name}), "error");
+    }
+  }
+  jpgFiles.sort(function(a, b) {
+    return a.name.localeCompare(b.name, undefined, { numeric: true, sensitivity: "base" });
+  });
+  renderJpgPreview();
+  if (added > 0) showToast(t("t_added_imgs", {n: added}), "success");
+}
+
+function renderJpgPreview() {
+  var grid = document.getElementById("jpgPreviewGrid");
+  var stats = document.getElementById("jpgStats");
+  grid.innerHTML = "";
+
+  if (jpgFiles.length === 0) {
+    stats.style.display = "none";
+    return;
+  }
+
+  stats.style.display = "flex";
+  document.getElementById("jpgCount").textContent = jpgFiles.length;
+  var totalSize = 0;
+  for (var i = 0; i < jpgFiles.length; i++) totalSize += jpgFiles[i].size;
+  document.getElementById("jpgSize").textContent = formatMB(totalSize);
+
+  for (var j = 0; j < jpgFiles.length; j++) {
+    (function(idx) {
+      var item = document.createElement("div");
+      item.className = "preview-item";
+      var num = document.createElement("div");
+      num.className = "preview-num";
+      num.textContent = idx + 1;
+      var remove = document.createElement("button");
+      remove.className = "preview-remove";
+      remove.innerHTML = "&times;";
+      remove.addEventListener("click", function() {
+        jpgFiles.splice(idx, 1);
+        renderJpgPreview();
+      });
+      var img = document.createElement("img");
+      img.src = jpgFiles[idx].dataUrl;
+      var name = document.createElement("div");
+      name.className = "preview-name";
+      name.textContent = jpgFiles[idx].name;
+      item.appendChild(num);
+      item.appendChild(remove);
+      item.appendChild(img);
+      item.appendChild(name);
+      grid.appendChild(item);
+    })(j);
+  }
+}
+
+function clearJpgFiles() {
+  jpgFiles = [];
+  renderJpgPreview();
+  document.getElementById("jpgFilename").value = "converted.pdf";
+  hideProgress("jpgProgressContainer");
+  showToast(t("t_cleared_list"), "info");
+}
+
+async function convertJpgToPdf() {
+  if (jpgFiles.length === 0) {
+    showToast(t("t_no_imgs"), "warning");
+    return;
+  }
+  var btn = document.getElementById("jpgConvertBtn");
+  btn.disabled = true;
+  showProgress("jpgProgressContainer");
+  setProgress("jpgProgressBar", "jpgProgressStatus", 0, t("p_initializing"));
+
+  try {
+    var jsPDF = window.jspdf.jsPDF;
+    var pdf = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
+    var pageWidth = 210;
+    var pageHeight = 297;
+
+    for (var i = 0; i < jpgFiles.length; i++) {
+      setProgress("jpgProgressBar", "jpgProgressStatus",
+        Math.round((i / jpgFiles.length) * 100),
+        t("p_processing_img", {n: (i + 1), total: jpgFiles.length}));
+
+      var img = await loadImage(jpgFiles[i].dataUrl);
+      if (i > 0) pdf.addPage();
+
+      var imgRatio = img.width / img.height;
+      var maxW = pageWidth - 20;
+      var maxH = pageHeight - 20;
+      var w, h;
+      if (maxW / maxH > imgRatio) {
+        h = maxH;
+        w = h * imgRatio;
+      } else {
+        w = maxW;
+        h = w / imgRatio;
+      }
+      var x = (pageWidth - w) / 2;
+      var y = (pageHeight - h) / 2;
+      pdf.addImage(jpgFiles[i].dataUrl, "JPEG", x, y, w, h);
+
+      await new Promise(function(resolve) { setTimeout(resolve, 0); });
+    }
+
+    setProgress("jpgProgressBar", "jpgProgressStatus", 100, t("p_done"));
+    var filename = document.getElementById("jpgFilename").value.trim() || "converted.pdf";
+    if (!/\.pdf$/i.test(filename)) filename += ".pdf";
+    pdf.save(filename);
+    showToast(t("t_pdf_converted", {name: filename}), "success");
+  } catch (err) {
+    showToast(t("t_convert_failed", {msg: err.message}), "error");
+  } finally {
+    btn.disabled = false;
+    setTimeout(function() { hideProgress("jpgProgressContainer"); }, 2000);
+  }
+}
+
+// ============================================
+// Module 2: PDF Merge
+// ============================================
+var mergeFiles = [];
+
+function initPdfMerge() {
+  var dropZone = document.getElementById("mergeDropZone");
+  var fileInput = document.getElementById("mergeFileInput");
+
+  dropZone.addEventListener("click", function() { fileInput.click(); });
+  fileInput.addEventListener("change", function(e) {
+    var files = Array.from(e.target.files);
+    fileInput.value = "";
+    handleMergeFiles(files);
+  });
+
+  setupDragDrop(dropZone, function(files) {
+    var filtered = [];
+    for (var i = 0; i < files.length; i++) {
+      var f = files[i];
+      if (f.type === "application/pdf" || /\.pdf$/i.test(f.name)) {
+        filtered.push(f);
+      } else {
+        showToast(t("t_skip_nonpdf", {name: f.name}), "warning");
+      }
+    }
+    handleMergeFiles(filtered);
+  });
+
+  document.getElementById("mergeBtn").addEventListener("click", mergePdfs);
+  document.getElementById("mergeClearBtn").addEventListener("click", clearMergeFiles);
+}
+
+async function handleMergeFiles(files) {
+  if (!files || files.length === 0) return;
+  var added = 0;
+  for (var i = 0; i < files.length; i++) {
+    var f = files[i];
+    if (!validateFileSize(f)) continue;
+    try {
+      var buffer = await readFileAsArrayBuffer(f);
+      var pdfDoc = await PDFLib.PDFDocument.load(buffer);
+      var pageCount = pdfDoc.getPageCount();
+      if (!validatePdfPages(pageCount, f.name)) continue;
+      mergeFiles.push({
+        file: f, name: f.name, size: f.size,
+        pages: pageCount, buffer: buffer
+      });
+      added++;
+    } catch (err) {
+      showToast(t("t_pdf_read_fail", {name: f.name}), "error");
+    }
+  }
+  renderMergeList();
+  if (added > 0) showToast(t("t_added_pdfs", {n: added}), "success");
+}
+
+function renderMergeList() {
+  var tbody = document.getElementById("mergeFileList");
+  var table = document.getElementById("mergeTable");
+  var stats = document.getElementById("mergeStats");
+  tbody.innerHTML = "";
+
+  if (mergeFiles.length === 0) {
+    table.style.display = "none";
+    stats.style.display = "none";
+    return;
+  }
+
+  table.style.display = "table";
+  stats.style.display = "flex";
+  document.getElementById("mergeCount").textContent = mergeFiles.length;
+  var totalSize = 0, totalPages = 0;
+  for (var i = 0; i < mergeFiles.length; i++) {
+    totalSize += mergeFiles[i].size;
+    totalPages += mergeFiles[i].pages;
+  }
+  document.getElementById("mergeSize").textContent = formatMB(totalSize);
+  document.getElementById("mergePages").textContent = totalPages;
+
+  for (var j = 0; j < mergeFiles.length; j++) {
+    (function(idx) {
+      var row = document.createElement("tr");
+      var tdIdx = document.createElement("td");
+      tdIdx.className = "col-idx";
+      tdIdx.textContent = idx + 1;
+      var tdName = document.createElement("td");
+      tdName.textContent = mergeFiles[idx].name;
+      var tdPages = document.createElement("td");
+      tdPages.className = "col-pages";
+      tdPages.textContent = mergeFiles[idx].pages;
+      var tdSize = document.createElement("td");
+      tdSize.className = "col-size";
+      tdSize.textContent = formatMB(mergeFiles[idx].size);
+      var tdActions = document.createElement("td");
+      tdActions.className = "col-actions";
+
+      var btnUp = document.createElement("button");
+      btnUp.className = "btn-icon";
+      btnUp.innerHTML = "&uarr;";
+      btnUp.title = "上移";
+      btnUp.disabled = (idx === 0);
+      if (idx === 0) btnUp.style.opacity = "0.3";
+      btnUp.addEventListener("click", function() {
+        if (idx > 0) {
+          var tmp = mergeFiles[idx];
+          mergeFiles[idx] = mergeFiles[idx - 1];
+          mergeFiles[idx - 1] = tmp;
+          renderMergeList();
+        }
+      });
+
+      var btnDown = document.createElement("button");
+      btnDown.className = "btn-icon";
+      btnDown.innerHTML = "&darr;";
+      btnDown.title = "下移";
+      if (idx === mergeFiles.length - 1) btnDown.style.opacity = "0.3";
+      btnDown.addEventListener("click", function() {
+        if (idx < mergeFiles.length - 1) {
+          var tmp2 = mergeFiles[idx];
+          mergeFiles[idx] = mergeFiles[idx + 1];
+          mergeFiles[idx + 1] = tmp2;
+          renderMergeList();
+        }
+      });
+
+      var btnRemove = document.createElement("button");
+      btnRemove.className = "btn-icon danger";
+      btnRemove.innerHTML = "&times;";
+      btnRemove.title = "删除";
+      btnRemove.addEventListener("click", function() {
+        mergeFiles.splice(idx, 1);
+        renderMergeList();
+      });
+
+      tdActions.appendChild(btnUp);
+      tdActions.appendChild(btnDown);
+      tdActions.appendChild(btnRemove);
+      row.appendChild(tdIdx);
+      row.appendChild(tdName);
+      row.appendChild(tdPages);
+      row.appendChild(tdSize);
+      row.appendChild(tdActions);
+      tbody.appendChild(row);
+    })(j);
+  }
+}
+
+function clearMergeFiles() {
+  mergeFiles = [];
+  renderMergeList();
+  document.getElementById("mergeFilename").value = "Merged.pdf";
+  hideProgress("mergeProgressContainer");
+  showToast(t("t_cleared_list"), "info");
+}
+
+async function mergePdfs() {
+  if (mergeFiles.length < 2) {
+    showToast(t("t_at_least_2"), "warning");
+    return;
+  }
+  var btn = document.getElementById("mergeBtn");
+  btn.disabled = true;
+  showProgress("mergeProgressContainer");
+  setProgress("mergeProgressBar", "mergeProgressStatus", 0, t("p_initializing"));
+
+  try {
+    var mergedPdf = await PDFLib.PDFDocument.create();
+    for (var i = 0; i < mergeFiles.length; i++) {
+      setProgress("mergeProgressBar", "mergeProgressStatus",
+        Math.round((i / mergeFiles.length) * 100),
+        t("p_processing_file", {n: (i + 1), total: mergeFiles.length, name: mergeFiles[i].name}));
+      var srcDoc = await PDFLib.PDFDocument.load(mergeFiles[i].buffer);
+      var pages = await mergedPdf.copyPages(srcDoc, srcDoc.getPageIndices());
+      for (var p = 0; p < pages.length; p++) {
+        mergedPdf.addPage(pages[p]);
+      }
+      await new Promise(function(resolve) { setTimeout(resolve, 0); });
+    }
+    setProgress("mergeProgressBar", "mergeProgressStatus", 100, t("p_merge_done"));
+    var pdfBytes = await savePdfSecure(mergedPdf);
+    var filename = document.getElementById("mergeFilename").value.trim() || "Merged.pdf";
+    if (!/\.pdf$/i.test(filename)) filename += ".pdf";
+    downloadBlob(new Blob([pdfBytes], { type: "application/pdf" }), filename);
+    showToast(t("t_merged", {name: filename}), "success");
+  } catch (err) {
+    showToast(t("t_merge_failed", {msg: err.message}), "error");
+  } finally {
+    btn.disabled = false;
+    setTimeout(function() { hideProgress("mergeProgressContainer"); }, 2000);
+  }
+}
+
+// ============================================
+// Module 3: PDF Split
+// ============================================
+var splitFile = null;
+var splitPdfDoc = null;
+var splitTotalPages = 0;
+
+function initPdfSplit() {
+  var dropZone = document.getElementById("splitDropZone");
+  var fileInput = document.getElementById("splitFileInput");
+
+  dropZone.addEventListener("click", function() { fileInput.click(); });
+  fileInput.addEventListener("change", function(e) {
+    if (e.target.files.length > 0) handleSplitFile(e.target.files[0]);
+    fileInput.value = "";
+  });
+
+  setupDragDrop(dropZone, function(files) {
+    var pdfFile = null;
+    for (var i = 0; i < files.length; i++) {
+      if (files[i].type === "application/pdf" || /\.pdf$/i.test(files[i].name)) {
+        pdfFile = files[i];
+        break;
+      }
+    }
+    if (pdfFile) {
+      handleSplitFile(pdfFile);
+    } else {
+      showToast(t("t_upload_pdf_warning"), "warning");
+    }
+  });
+
+  document.getElementById("splitBtn").addEventListener("click", splitPdf);
+  document.getElementById("splitClearBtn").addEventListener("click", clearSplitFile);
+}
+
+async function handleSplitFile(file) {
+  clearSplitFile();
+  if (!validateFileSize(file)) return;
+  try {
+    var buffer = await readFileAsArrayBuffer(file);
+    splitPdfDoc = await PDFLib.PDFDocument.load(buffer);
+    splitTotalPages = splitPdfDoc.getPageCount();
+    if (!validatePdfPages(splitTotalPages, file.name)) {
+      clearSplitFile();
+      return;
+    }
+    splitFile = { name: file.name, size: file.size, buffer: buffer };
+    document.getElementById("splitFileInfo").style.display = "block";
+    document.getElementById("splitFileName").textContent = file.name;
+    document.getElementById("splitTotalPages").textContent = splitTotalPages;
+    document.getElementById("splitFileSize").textContent = formatMB(file.size);
+    showToast(t("t_pdf_loaded", {n: splitTotalPages}), "success");
+  } catch (err) {
+    showToast(t("t_pdf_read_fail", {name: err.message}), "error");
+  }
+}
+
+function clearSplitFile() {
+  splitFile = null;
+  splitPdfDoc = null;
+  splitTotalPages = 0;
+  document.getElementById("splitFileInfo").style.display = "none";
+  document.getElementById("splitRangeInput").value = "";
+  hideProgress("splitProgressContainer");
+}
+
+function parsePageRanges(input, totalPages) {
+  var ranges = [];
+  var errors = [];
+  var lines = input.trim().split("\n");
+
+  for (var i = 0; i < lines.length; i++) {
+    var line = lines[i].trim();
+    if (!line) continue;
+    var match = line.match(/^(\d+)\s*-\s*(\d+)$/);
+    if (!match) {
+      errors.push('格式错误: "' + line + '" (正确格式: 1-10)');
+      continue;
+    }
+    var start = parseInt(match[1]);
+    var end = parseInt(match[2]);
+    if (start < 1 || end < 1) {
+      errors.push('页码不能小于1: "' + line + '"');
+      continue;
+    }
+    if (start > totalPages || end > totalPages) {
+      errors.push('页码超出范围(总页数' + totalPages + '): "' + line + '"');
+      continue;
+    }
+    if (start > end) {
+      errors.push('起始页大于结束页: "' + line + '"');
+      continue;
+    }
+    var indices = [];
+    for (var p = start; p <= end; p++) {
+      indices.push(p - 1);
+    }
+    ranges.push({ start: start, end: end, indices: indices });
+  }
+  return { ranges: ranges, errors: errors };
+}
+
+async function splitPdf() {
+  if (!splitPdfDoc) {
+    showToast(t("t_no_pdf"), "warning");
+    return;
+  }
+  var input = document.getElementById("splitRangeInput").value.trim();
+  if (!input) {
+    showToast(t("t_no_range"), "warning");
+    return;
+  }
+  var result = parsePageRanges(input, splitTotalPages);
+  if (result.errors.length > 0) {
+    showToast(result.errors[0], "error");
+    return;
+  }
+  if (result.ranges.length === 0) {
+    showToast(t("t_no_extracted"), "warning");
+    return;
+  }
+
+  var btn = document.getElementById("splitBtn");
+  btn.disabled = true;
+  showProgress("splitProgressContainer");
+  setProgress("splitProgressBar", "splitProgressStatus", 0, t("p_extracting"));
+  var baseName = splitFile.name.replace(/\.pdf$/i, "") || "Split";
+
+  try {
+    var zipEntries = [];
+    var totalPagesExtracted = 0;
+
+    for (var r = 0; r < result.ranges.length; r++) {
+      var range = result.ranges[r];
+      setProgress("splitProgressBar", "splitProgressStatus",
+        Math.round((r / result.ranges.length) * 90),
+        t("p_processing_range", {n: (r + 1), total: result.ranges.length, start: range.start, end: range.end}));
+
+      var newPdf = await PDFLib.PDFDocument.create();
+      var pages = await newPdf.copyPages(splitPdfDoc, range.indices);
+      for (var i = 0; i < pages.length; i++) {
+        newPdf.addPage(pages[i]);
+      }
+      var pdfBytes = await savePdfSecure(newPdf);
+
+      var seq = String(r + 1).padStart(2, "0");
+      var partName = baseName + "_part" + seq + "_p" + range.start + "-" + range.end + ".pdf";
+      zipEntries.push({ name: partName, data: new Uint8Array(pdfBytes) });
+      totalPagesExtracted += pages.length;
+      await new Promise(function(resolve) { setTimeout(resolve, 0); });
+    }
+
+    setProgress("splitProgressBar", "splitProgressStatus", 95, t("p_packing_zip"));
+
+    if (zipEntries.length === 1) {
+      var singleBlob = new Blob([zipEntries[0].data], { type: "application/pdf" });
+      downloadBlob(singleBlob, zipEntries[0].name);
+      showToast(t("t_split_single", {n: totalPagesExtracted, name: zipEntries[0].name}), "success");
+    } else {
+      var zipBlob = createZip(zipEntries);
+      var zipName = baseName + "_split.zip";
+      downloadBlob(zipBlob, zipName);
+      showToast(t("t_split_done", {n: zipEntries.length, p: totalPagesExtracted}), "success");
+    }
+  } catch (err) {
+    showToast(t("t_split_failed", {msg: err.message}), "error");
+  } finally {
+    btn.disabled = false;
+    setTimeout(function() { hideProgress("splitProgressContainer"); }, 2000);
+  }
+}
+
+// ============================================
+// Module 4: Image Batch Rename
+// ============================================
+var renameFiles = [];
+var renameProcessedCache = {};
+
+function initImageRename() {
+  var dropZone = document.getElementById("renameDropZone");
+  var fileInput = document.getElementById("renameFileInput");
+
+  dropZone.addEventListener("click", function() { fileInput.click(); });
+  fileInput.addEventListener("change", function(e) {
+    var files = Array.from(e.target.files);
+    fileInput.value = "";
+    handleRenameFiles(files);
+  });
+
+  setupDragDrop(dropZone, function(files) {
+    var filtered = [];
+    for (var i = 0; i < files.length; i++) {
+      if (files[i].type.startsWith("image/")) {
+        filtered.push(files[i]);
+      }
+    }
+    handleRenameFiles(filtered);
+  });
+
+  var bgCheck = document.getElementById("renameRemoveBgCheck");
+  var bgRow = document.getElementById("renameBgToleranceRow");
+  var bgHint = document.getElementById("renameBgHint");
+  bgCheck.addEventListener("change", function() {
+    bgRow.style.display = bgCheck.checked ? "flex" : "none";
+    bgHint.style.display = bgCheck.checked ? "block" : "none";
+    renameProcessedCache = {};
+  });
+  var toleranceSelect = document.getElementById("renameBgToleranceSelect");
+  toleranceSelect.addEventListener("change", function() {
+    renameProcessedCache = {};
+  });
+  document.getElementById("renameCompressSelect").addEventListener("change", function() {
+    renameProcessedCache = {};
+  });
+
+  document.getElementById("renamePreviewBtn").addEventListener("click", renderRenamePreview);
+  document.getElementById("renameExportBtn").addEventListener("click", exportRenameCsv);
+  document.getElementById("renameDownloadBtn").addEventListener("click", downloadRenamedImagesZip);
+  document.getElementById("renameClearBtn").addEventListener("click", clearRenameFiles);
+}
+
+function handleRenameFiles(files) {
+  if (!files || files.length === 0) return;
+  if (renameFiles.length + files.length > MAX_IMAGE_COUNT) {
+    showToast(t("t_too_many_imgs"), "error");
+    return;
+  }
+  var added = 0;
+  for (var i = 0; i < files.length; i++) {
+    if (files[i].type.startsWith("image/")) {
+      if (!validateFileSize(files[i])) continue;
+      renameFiles.push(files[i]);
+      added++;
+    }
+  }
+  renameFiles.sort(function(a, b) {
+    return a.name.localeCompare(b.name, undefined, { numeric: true, sensitivity: "base" });
+  });
+  renameProcessedCache = {};
+  if (added > 0) {
+    renderRenamePreview();
+    showToast(t("t_added_imgs", {n: added}), "success");
+  }
+}
+
+function getExtension(filename) {
+  var parts = filename.split(".");
+  if (parts.length < 2) return "jpg";
+  var ext = parts[parts.length - 1].toLowerCase();
+  if (ext === "jpeg") return "jpg";
+  return ext || "jpg";
+}
+
+function getOutputExt(originalExt, removeBg) {
+  if (removeBg) return "png";
+  if (originalExt === "png" || originalExt === "gif" || originalExt === "bmp") return "jpg";
+  return originalExt;
+}
+
+function detectBgColor(imgData) {
+  var data = imgData.data;
+  var w = imgData.width;
+  var h = imgData.height;
+  var corners = [
+    [0, 0], [w - 1, 0], [0, h - 1], [w - 1, h - 1]
+  ];
+  var r = 0, g = 0, b = 0;
+  for (var i = 0; i < corners.length; i++) {
+    var idx = (corners[i][1] * w + corners[i][0]) * 4;
+    r += data[idx];
+    g += data[idx + 1];
+    b += data[idx + 2];
+  }
+  return [Math.round(r / 4), Math.round(g / 4), Math.round(b / 4)];
+}
+
+function removeBackground(canvas, ctx, tolerance) {
+  var imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+  var data = imgData.data;
+  var w = imgData.width;
+  var h = imgData.height;
+  var corners = [
+    [0, 0], [w - 1, 0], [0, h - 1], [w - 1, h - 1]
+  ];
+  var bgR = 0, bgG = 0, bgB = 0;
+  for (var i = 0; i < corners.length; i++) {
+    var idx = (corners[i][1] * w + corners[i][0]) * 4;
+    bgR += data[idx];
+    bgG += data[idx + 1];
+    bgB += data[idx + 2];
+  }
+  bgR = Math.round(bgR / 4);
+  bgG = Math.round(bgG / 4);
+  bgB = Math.round(bgB / 4);
+  var tolSq = tolerance * tolerance * 3;
+  for (var p = 0; p < data.length; p += 4) {
+    var dr = data[p] - bgR;
+    var dg = data[p + 1] - bgG;
+    var db = data[p + 2] - bgB;
+    if (dr * dr + dg * dg + db * db <= tolSq) {
+      data[p + 3] = 0;
+    }
+  }
+  ctx.putImageData(imgData, 0, 0);
+}
+
+async function processRenameImage(file) {
+  var compressVal = document.getElementById("renameCompressSelect").value;
+  var removeBg = document.getElementById("renameRemoveBgCheck").checked;
+  var tolerance = parseInt(document.getElementById("renameBgToleranceSelect").value);
+
+  var cacheKey = file.name + "_" + file.size + "_" + compressVal + "_" + removeBg + "_" + tolerance;
+  if (renameProcessedCache[cacheKey]) return renameProcessedCache[cacheKey];
+
+  var ext = getExtension(file.name);
+  var outExt = getOutputExt(ext, removeBg);
+  var quality = compressVal === "none" ? 0.92 : parseFloat(compressVal);
+
+  var dataUrl = await readFileAsDataURL(file);
+  var img = await loadImage(dataUrl);
+
+  var canvas = document.createElement("canvas");
+  canvas.width = img.width;
+  canvas.height = img.height;
+  var ctx = canvas.getContext("2d");
+  ctx.drawImage(img, 0, 0);
+
+  if (removeBg) {
+    removeBackground(canvas, ctx, tolerance);
+  }
+
+  var mimeType = outExt === "png" ? "image/png" : "image/jpeg";
+  var result = canvas.toDataURL(mimeType, quality);
+  var base64 = result.split(",")[1];
+  var processedBytes = base64ToUint8Array(base64);
+
+  var processed = {
+    outExt: outExt,
+    processedSize: processedBytes.length,
+    dataUrl: result,
+    bytes: processedBytes
+  };
+  renameProcessedCache[cacheKey] = processed;
+  return processed;
+}
+
+function base64ToUint8Array(base64) {
+  var binary = atob(base64);
+  var bytes = new Uint8Array(binary.length);
+  for (var i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+  return bytes;
+}
+
+function renderRenamePreview() {
+  if (renameFiles.length === 0) {
+    showToast(t("t_no_imgs"), "warning");
+    return;
+  }
+  var prefix = document.getElementById("renamePrefix").value.trim() || "image";
+  var tbody = document.getElementById("renamePreviewList");
+  var table = document.getElementById("renameTable");
+  tbody.innerHTML = "";
+  table.style.display = "table";
+
+  for (var i = 0; i < renameFiles.length; i++) {
+    (function(idx) {
+      var file = renameFiles[idx];
+      var ext = getExtension(file.name);
+      var removeBg = document.getElementById("renameRemoveBgCheck").checked;
+      var outExt = getOutputExt(ext, removeBg);
+      var newName = prefix + "_" + String(idx + 1).padStart(3, "0") + "." + outExt;
+
+      var row = document.createElement("tr");
+      var tdIdx = document.createElement("td");
+      tdIdx.className = "col-idx";
+      tdIdx.textContent = idx + 1;
+      var tdThumb = document.createElement("td");
+      var thumb = document.createElement("img");
+      thumb.className = "preview-thumb";
+      thumb.src = URL.createObjectURL(file);
+      tdThumb.appendChild(thumb);
+      var tdOld = document.createElement("td");
+      tdOld.textContent = file.name;
+      var tdNew = document.createElement("td");
+      tdNew.textContent = newName;
+      tdNew.style.color = "var(--primary-dark)";
+      tdNew.style.fontWeight = "600";
+      var tdSize = document.createElement("td");
+      tdSize.className = "col-size";
+      tdSize.textContent = formatBytes(file.size);
+      var tdNewSize = document.createElement("td");
+      tdNewSize.className = "col-size";
+      tdNewSize.id = "rename-size-" + idx;
+      tdNewSize.textContent = "-";
+      tdNewSize.style.color = "var(--text-tertiary)";
+
+      row.appendChild(tdIdx);
+      row.appendChild(tdThumb);
+      row.appendChild(tdOld);
+      row.appendChild(tdNew);
+      row.appendChild(tdSize);
+      row.appendChild(tdNewSize);
+      tbody.appendChild(row);
+
+      processRenameImage(file).then(function(result) {
+        var sizeCell = document.getElementById("rename-size-" + idx);
+        if (sizeCell) {
+          sizeCell.textContent = formatBytes(result.processedSize);
+          sizeCell.style.color = result.processedSize < file.size ? "var(--success)" : "var(--warning)";
+        }
+      }).catch(function() {
+        var sizeCell = document.getElementById("rename-size-" + idx);
+        if (sizeCell) {
+          sizeCell.textContent = t("t_process_fail");
+          sizeCell.style.color = "var(--error)";
+        }
+      });
+    })(i);
+  }
+}
+
+function clearRenameFiles() {
+  renameFiles = [];
+  renameProcessedCache = {};
+  document.getElementById("renamePrefix").value = "";
+  document.getElementById("renamePreviewList").innerHTML = "";
+  document.getElementById("renameTable").style.display = "none";
+  hideProgress("renameProgressContainer");
+  showToast(t("t_cleared"), "info");
+}
+
+function exportRenameCsv() {
+  if (renameFiles.length === 0) {
+    showToast(t("t_no_imgs"), "warning");
+    return;
+  }
+  var prefix = document.getElementById("renamePrefix").value.trim() || "image";
+  var csv = "Old Name,New Name\n";
+  for (var i = 0; i < renameFiles.length; i++) {
+    var ext = getExtension(renameFiles[i].name);
+    var removeBg = document.getElementById("renameRemoveBgCheck").checked;
+    var outExt = getOutputExt(ext, removeBg);
+    var newName = prefix + "_" + String(i + 1).padStart(3, "0") + "." + outExt;
+    var oldEsc = renameFiles[i].name.includes(",") ? '"' + renameFiles[i].name + '"' : renameFiles[i].name;
+    var newEsc = newName.includes(",") ? '"' + newName + '"' : newName;
+    csv += oldEsc + "," + newEsc + "\n";
+  }
+  var blob = new Blob(["\ufeff" + csv], { type: "text/csv;charset=utf-8" });
+  downloadBlob(blob, "rename_list.csv");
+  showToast(t("t_csv_exported"), "success");
+}
+
+async function downloadRenamedImagesZip() {
+  if (renameFiles.length === 0) {
+    showToast(t("t_no_imgs"), "warning");
+    return;
+  }
+  var btn = document.getElementById("renameDownloadBtn");
+  btn.disabled = true;
+  showProgress("renameProgressContainer");
+  setProgress("renameProgressBar", "renameProgressStatus", 0, t("p_processing_img", {n: 0, total: renameFiles.length}));
+
+  try {
+    var prefix = document.getElementById("renamePrefix").value.trim() || "image";
+    var zipEntries = [];
+    var usedNames = {};
+
+    for (var i = 0; i < renameFiles.length; i++) {
+      setProgress("renameProgressBar", "renameProgressStatus",
+        Math.round((i / renameFiles.length) * 90),
+        t("p_processing_img", {n: (i + 1), total: renameFiles.length}));
+      var result = await processRenameImage(renameFiles[i]);
+      var newName = prefix + "_" + String(i + 1).padStart(3, "0") + "." + result.outExt;
+      if (usedNames[newName]) {
+        newName = prefix + "_" + String(i + 1).padStart(3, "0") + "_" + Date.now() + "." + result.outExt;
+      }
+      usedNames[newName] = true;
+      zipEntries.push({ name: newName, data: result.bytes });
+      await new Promise(function(resolve) { setTimeout(resolve, 0); });
+    }
+
+    setProgress("renameProgressBar", "renameProgressStatus", 92, t("p_packing"));
+    await new Promise(function(resolve) { setTimeout(resolve, 10); });
+    var zipBlob = createZip(zipEntries);
+    setProgress("renameProgressBar", "renameProgressStatus", 100, t("p_done"));
+    var zipName = (prefix || "images") + ".zip";
+    downloadBlob(zipBlob, zipName);
+    showToast(t("t_zip_done", {n: renameFiles.length}), "success");
+  } catch (err) {
+    showToast(t("t_pack_failed", {msg: err.message}), "error");
+  } finally {
+    btn.disabled = false;
+    setTimeout(function() { hideProgress("renameProgressContainer"); }, 2000);
+  }
+}
+
+function makeCrcTable() {
+  var table = new Uint32Array(256);
+  for (var n = 0; n < 256; n++) {
+    var c = n;
+    for (var k = 0; k < 8; k++) {
+      if (c & 1) c = 0xEDB88320 ^ (c >>> 1);
+      else c = c >>> 1;
+    }
+    table[n] = c;
+  }
+  return table;
+}
+
+var crcTable = null;
+function crc32(data) {
+  if (!crcTable) crcTable = makeCrcTable();
+  var crc = 0xFFFFFFFF;
+  for (var i = 0; i < data.length; i++) {
+    crc = crcTable[(crc ^ data[i]) & 0xFF] ^ (crc >>> 8);
+  }
+  return (crc ^ 0xFFFFFFFF) >>> 0;
+}
+
+function getDosDateTime() {
+  var now = new Date();
+  var dosTime = ((now.getHours() & 0x1F) << 11) | ((now.getMinutes() & 0x3F) << 5) | ((Math.floor(now.getSeconds() / 2)) & 0x1F);
+  var dosDate = (((now.getFullYear() - 1980) & 0x7F) << 9) | (((now.getMonth() + 1) & 0x0F) << 5) | (now.getDate() & 0x1F);
+  return { time: dosTime, date: dosDate };
+}
+
+function qcValidateEntries(entries) {
+  var errors = [];
+  if (!entries || entries.length === 0) {
+    errors.push("ZIP条目为空");
+    return errors;
+  }
+  if (entries.length > 65535) {
+    errors.push("文件数量超过65535上限");
+  }
+  for (var i = 0; i < entries.length; i++) {
+    var e = entries[i];
+    if (!e.name || e.name.length === 0) {
+      errors.push("条目[" + i + "]文件名为空");
+      continue;
+    }
+    if (!e.data || e.data.length === 0) {
+      errors.push("条目[" + i + "](" + e.name + ")数据为空");
+    }
+    if (e.data.length > 4294967295) {
+      errors.push("条目[" + i + "](" + e.name + ")超过4GB上限");
+    }
+  }
+  return errors;
+}
+
+function createZip(entries) {
+  var qcErrors = qcValidateEntries(entries);
+  if (qcErrors.length > 0) {
+    throw new Error("QC检查失败: " + qcErrors.join("; "));
+  }
+
+  var nameBytesList = [];
+  var crcList = [];
+  var localHeaderSizes = [];
+  var totalLocalSize = 0;
+  var totalCentralSize = 0;
+  var dt = getDosDateTime();
+
+  for (var i = 0; i < entries.length; i++) {
+    var nameBytes = new TextEncoder().encode(entries[i].name);
+    nameBytesList.push(nameBytes);
+    var crc = crc32(entries[i].data);
+    crcList.push(crc);
+    var localRecSize = 30 + nameBytes.length + entries[i].data.length;
+    localHeaderSizes.push(localRecSize);
+    totalLocalSize += localRecSize;
+    totalCentralSize += 46 + nameBytes.length;
+  }
+
+  var totalSize = totalLocalSize + totalCentralSize + 22;
+  var buffer = new ArrayBuffer(totalSize);
+  var view = new DataView(buffer);
+  var bytes = new Uint8Array(buffer);
+  var offset = 0;
+
+  for (var li = 0; li < entries.length; li++) {
+    var data = entries[li].data;
+    var nb = nameBytesList[li];
+    var crc = crcList[li];
+    var dSize = data.length;
+
+    view.setUint32(offset, 0x04034b50, true); offset += 4;
+    view.setUint16(offset, 20, true); offset += 2;
+    view.setUint16(offset, 0x0800, true); offset += 2;
+    view.setUint16(offset, 0, true); offset += 2;
+    view.setUint16(offset, dt.time, true); offset += 2;
+    view.setUint16(offset, dt.date, true); offset += 2;
+    view.setUint32(offset, crc, true); offset += 4;
+    view.setUint32(offset, dSize, true); offset += 4;
+    view.setUint32(offset, dSize, true); offset += 4;
+    view.setUint16(offset, nb.length, true); offset += 2;
+    view.setUint16(offset, 0, true); offset += 2;
+    bytes.set(nb, offset); offset += nb.length;
+    bytes.set(data, offset); offset += data.length;
+  }
+
+  var localOffset = 0;
+  for (var ci = 0; ci < entries.length; ci++) {
+    var cd = entries[ci].data;
+    var cnb = nameBytesList[ci];
+    var ccrc = crcList[ci];
+    var cdSize = cd.length;
+
+    view.setUint32(offset, 0x02014b50, true); offset += 4;
+    view.setUint16(offset, 20, true); offset += 2;
+    view.setUint16(offset, 20, true); offset += 2;
+    view.setUint16(offset, 0x0800, true); offset += 2;
+    view.setUint16(offset, 0, true); offset += 2;
+    view.setUint16(offset, dt.time, true); offset += 2;
+    view.setUint16(offset, dt.date, true); offset += 2;
+    view.setUint32(offset, ccrc, true); offset += 4;
+    view.setUint32(offset, cdSize, true); offset += 4;
+    view.setUint32(offset, cdSize, true); offset += 4;
+    view.setUint16(offset, cnb.length, true); offset += 2;
+    view.setUint16(offset, 0, true); offset += 2;
+    view.setUint16(offset, 0, true); offset += 2;
+    view.setUint16(offset, 0, true); offset += 2;
+    view.setUint16(offset, 0, true); offset += 2;
+    view.setUint32(offset, 0, true); offset += 4;
+    view.setUint32(offset, localOffset, true); offset += 4;
+    bytes.set(cnb, offset); offset += cnb.length;
+
+    localOffset += localHeaderSizes[ci];
+  }
+
+  view.setUint32(offset, 0x06054b50, true); offset += 4;
+  view.setUint16(offset, 0, true); offset += 2;
+  view.setUint16(offset, 0, true); offset += 2;
+  view.setUint16(offset, entries.length, true); offset += 2;
+  view.setUint16(offset, entries.length, true); offset += 2;
+  view.setUint32(offset, totalCentralSize, true); offset += 4;
+  view.setUint32(offset, totalLocalSize, true); offset += 4;
+  view.setUint16(offset, 0, true); offset += 2;
+
+  if (offset !== totalSize) {
+    throw new Error("ZIP结构校验失败: 预期" + totalSize + "字节, 实际" + offset + "字节");
+  }
+
+  var sigLocal = view.getUint32(0, true);
+  var sigCentral = view.getUint32(totalLocalSize, true);
+  var sigEnd = view.getUint32(totalLocalSize + totalCentralSize, true);
+  if (sigLocal !== 0x04034b50) throw new Error("ZIP签名校验失败(LFH)");
+  if (sigCentral !== 0x02014b50) throw new Error("ZIP签名校验失败(CD)");
+  if (sigEnd !== 0x06054b50) throw new Error("ZIP签名校验失败(EOCD)");
+
+  return new Blob([buffer], { type: "application/zip" });
+}
+
+// ============================================
+// Module 5: A3 Report Tool
+// ============================================
+function initA3Report() {
+  document.getElementById("a3GenerateBtn").addEventListener("click", generateA3Report);
+  document.getElementById("a3LoadExampleBtn").addEventListener("click", loadA3Example);
+  document.getElementById("a3ClearBtn").addEventListener("click", function() {
+    var fields = ["a3Title", "a3CurrentState", "a3Target", "a3CauseAnalysis", "a3Countermeasure", "a3EffectVerification", "a3Standardization"];
+    for (var i = 0; i < fields.length; i++) document.getElementById(fields[i]).value = "";
+    hideProgress("a3ProgressContainer");
+    showToast(t("t_form_cleared"), "info");
+  });
+}
+
+function loadA3Example() {
+  document.getElementById("a3Title").value = "车门安装工程不良率改善";
+
+  document.getElementById("a3CurrentState").value =
+    "车门安装工程不良率从0.1%升至0.4%，超出目标值3倍。\n" +
+    "不良中72%为「车门位置微小偏移」，夜班占比达65%。\n" +
+    "返修费用每月180万日元，年损失约2,160万日元。\n" +
+    "主要客户在季度评审中提出品质投诉，影响续约。";
+
+  document.getElementById("a3Target").value =
+    "3个月内将车门安装不良率从0.4%降至0.1%以下。\n" +
+    "消除夜班集中的位置偏移问题。\n" +
+    "年返修成本降低2,000万日元以上。";
+
+  document.getElementById("a3CauseAnalysis").value =
+    "5 Whys 分析：\n" +
+    "Q1: 为什么车门位置偏移？→ 治具固定松动\n" +
+    "Q2: 为什么治具松动？→ 固定螺栓磨损导致间隙\n" +
+    "Q3: 为什么螺栓磨损未更换？→ 无更换判定标准\n" +
+    "Q4: 为什么没有标准？→ 治具维护流程未制定\n" +
+    "Q5: 为什么未制定流程？→ 设备维护体系仅覆盖主机，治具被归类为消耗品未纳入点检\n\n" +
+    "根本原因：治具维护管理体系缺失，无定期点检标准与更换基准。";
+
+  document.getElementById("a3Countermeasure").value =
+    "1. 制定治具维护标准书：明确点检频次（周次）、判定基准（间隙>0.3mm须更换）、记录方式\n" +
+    "2. 制作治具状态可视化看板：绿/黄/红三色标识当前状态，操作者开线前确认\n" +
+    "3. 导入周次定期点检制度：由班组长执行，品质课抽查\n" +
+    "4. 夜班追加开线首件确认：偏移量测量并记录，超标即停线\n" +
+    "5. 采购备用治具2套，实现快速更换不停产";
+
+  document.getElementById("a3EffectVerification").value =
+    "对策实施后2个月：\n" +
+    "不良率：0.4% → 0.08%（目标0.1%以下，达成）\n" +
+    "夜班偏移不良：减少82%\n" +
+    "月返修成本：180万 → 32万日元\n" +
+    "年化节省：1,776万日元";
+
+  document.getElementById("a3Standardization").value =
+    "1. 治具维护标准书纳入品质体系文件（文件编号QP-xxx）\n" +
+    "2. 横展开：向其他3个同类工厂同步推广治具点检制度\n" +
+    "3. 新员工培训纳入治具确认作业内容\n" +
+    "4. 每月品质月报中追加治具状态报告项";
+
+  showToast(t("t_uploaded_example"), "success");
+}
+
+function wrapText(ctx, text, maxWidth) {
+  var lines = [];
+  var paragraphs = text.split("\n");
+  for (var pi = 0; pi < paragraphs.length; pi++) {
+    var para = paragraphs[pi];
+    if (para === "") { lines.push(""); continue; }
+    var line = "";
+    var chars = Array.from(para);
+    for (var ci = 0; ci < chars.length; ci++) {
+      var testLine = line + chars[ci];
+      if (ctx.measureText(testLine).width > maxWidth && line) {
+        lines.push(line);
+        line = chars[ci];
+      } else {
+        line = testLine;
+      }
+    }
+    if (line) lines.push(line);
+  }
+  return lines;
+}
+
+function drawA3Section(ctx, x, y, w, h, title, content, M) {
+  ctx.strokeStyle = "#D0D0D0";
+  ctx.lineWidth = 1;
+  ctx.strokeRect(x * M, y * M, w * M, h * M);
+
+  ctx.fillStyle = "#E8F1FA";
+  ctx.fillRect(x * M, y * M, w * M, 7 * M);
+
+  ctx.fillStyle = "#005A9E";
+  ctx.font = "bold 20px 'Segoe UI','Microsoft YaHei',sans-serif";
+  ctx.textBaseline = "alphabetic";
+  ctx.fillText(title, (x + 3) * M, (y + 5) * M);
+
+  ctx.fillStyle = "#323130";
+  ctx.font = "16px 'Segoe UI','Microsoft YaHei',sans-serif";
+  var maxWidth = (w - 6) * M;
+  var lines = wrapText(ctx, content || "(未填写)", maxWidth);
+  var lineHeight = 5.5 * M;
+  var startY = (y + 10) * M;
+  var maxY = (y + h - 3) * M;
+  for (var i = 0; i < lines.length; i++) {
+    var yPos = startY + i * lineHeight;
+    if (yPos < maxY) {
+      ctx.fillText(lines[i], (x + 3) * M, yPos);
+    }
+  }
+}
+
+async function generateA3Report() {
+  var btn = document.getElementById("a3GenerateBtn");
+  btn.disabled = true;
+  showProgress("a3ProgressContainer");
+  setProgress("a3ProgressBar", "a3ProgressStatus", 10, "正在渲染报告...");
+
+  try {
+    await new Promise(function(resolve) { setTimeout(resolve, 50); });
+
+    var M = 5;
+    var W = 420 * M;
+    var H = 297 * M;
+    var canvas = document.createElement("canvas");
+    canvas.width = W;
+    canvas.height = H;
+    var ctx = canvas.getContext("2d");
+    ctx.fillStyle = "#FFFFFF";
+    ctx.fillRect(0, 0, W, H);
+    ctx.textBaseline = "alphabetic";
+
+    // Header bar
+    ctx.fillStyle = "#0078D4";
+    ctx.fillRect(0, 0, W, 25 * M);
+    ctx.fillStyle = "#FFFFFF";
+    ctx.font = "bold 28px 'Segoe UI','Microsoft YaHei',sans-serif";
+    ctx.fillText("A3 Report", 15 * M, 18 * M);
+
+    // Title
+    var title = document.getElementById("a3Title").value.trim() || "(未填写)";
+    ctx.fillStyle = "#323130";
+    ctx.font = "bold 22px 'Segoe UI','Microsoft YaHei',sans-serif";
+    ctx.fillText("课题名称: " + title, 15 * M, 38 * M);
+
+    // Separator line
+    ctx.strokeStyle = "#0078D4";
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(15 * M, 42 * M);
+    ctx.lineTo(405 * M, 42 * M);
+    ctx.stroke();
+
+    // Column separator
+    ctx.strokeStyle = "#D0D0D0";
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(210 * M, 45 * M);
+    ctx.lineTo(210 * M, 287 * M);
+    ctx.stroke();
+
+    setProgress("a3ProgressBar", "a3ProgressStatus", 40, t("p_drawing"));
+
+    var currentState = document.getElementById("a3CurrentState").value;
+    var target = document.getElementById("a3Target").value;
+    var causeAnalysis = document.getElementById("a3CauseAnalysis").value;
+    var countermeasure = document.getElementById("a3Countermeasure").value;
+    var effectVerification = document.getElementById("a3EffectVerification").value;
+    var standardization = document.getElementById("a3Standardization").value;
+
+    // Left column
+    drawA3Section(ctx, 15, 48, 190, 80, "1. 现状 (Current State)", currentState, M);
+    drawA3Section(ctx, 15, 128, 190, 40, "2. 目标 (Target)", target, M);
+    drawA3Section(ctx, 15, 168, 190, 119, "3. 原因分析 (Root Cause Analysis)", causeAnalysis, M);
+
+    // Right column
+    drawA3Section(ctx, 215, 48, 190, 120, "4. 对策 (Countermeasures)", countermeasure, M);
+    drawA3Section(ctx, 215, 168, 190, 60, "5. 效果确认 (Effect Verification)", effectVerification, M);
+    drawA3Section(ctx, 215, 228, 190, 59, "6. 标准化 (Standardization)", standardization, M);
+
+    // Footer
+    ctx.fillStyle = "#A19F9D";
+    ctx.font = "14px 'Segoe UI','Microsoft YaHei',sans-serif";
+    var today = new Date();
+    var dateStr = today.getFullYear() + "-" + String(today.getMonth() + 1).padStart(2, "0") + "-" + String(today.getDate()).padStart(2, "0");
+    ctx.fillText("\u00A9 Beshinde Document Utility Center", 15 * M, 293 * M);
+    ctx.textAlign = "right";
+    ctx.fillText(dateStr, 405 * M, 293 * M);
+    ctx.textAlign = "left";
+
+    setProgress("a3ProgressBar", "a3ProgressStatus", 70, "正在生成PDF...");
+
+    var imgData = canvas.toDataURL("image/jpeg", 0.95);
+    var jsPDF = window.jspdf.jsPDF;
+    var pdf = new jsPDF({ orientation: "landscape", unit: "mm", format: "a3" });
+    pdf.addImage(imgData, "JPEG", 0, 0, 420, 297);
+    pdf.save("A3_Report.pdf");
+
+    setProgress("a3ProgressBar", "a3ProgressStatus", 100, "报告已生成！");
+    showToast(t("t_a3_done"), "success");
+  } catch (err) {
+    showToast(t("t_a3_failed", {msg: err.message}), "error");
+  } finally {
+    btn.disabled = false;
+    setTimeout(function() { hideProgress("a3ProgressContainer"); }, 2000);
+  }
+}
+
+// ============================================
+// Initialization
+// ============================================
+document.addEventListener("DOMContentLoaded", function() {
+  if (typeof window.jspdf === "undefined" || typeof window.jspdf.jsPDF === "undefined" || typeof window.PDFLib === "undefined") {
+    document.getElementById("errorOverlay").classList.add("show");
+    return;
+  }
+
+  // Language switcher
+  var savedLang = "zh";
+  try { savedLang = localStorage.getItem("duc_lang") || "zh"; } catch (e) {}
+  applyLanguage(savedLang);
+  var langBtns = document.querySelectorAll(".lang-btn");
+  for (var li = 0; li < langBtns.length; li++) {
+    (function(btn) {
+      btn.addEventListener("click", function() {
+        applyLanguage(btn.getAttribute("data-lang"));
+      });
+    })(langBtns[li]);
+  }
+
+  // Navigation
+  var navItems = document.querySelectorAll(".nav-item");
+  for (var i = 0; i < navItems.length; i++) {
+    (function(item) {
+      item.addEventListener("click", function() {
+        switchModule(item.getAttribute("data-module"));
+      });
+    })(navItems[i]);
+  }
+
+  // Feature card navigation
+  var featureCards = document.querySelectorAll(".feature-card");
+  for (var j = 0; j < featureCards.length; j++) {
+    (function(card) {
+      card.addEventListener("click", function() {
+        switchModule(card.getAttribute("data-go"));
+      });
+    })(featureCards[j]);
+  }
+
+  // Initialize modules
+  initJpgToPdf();
+  initPdfMerge();
+  initPdfSplit();
+  initImageRename();
+  initA3Report();
+
+  switchModule("home");
+});
+</script>
+</body>
+</html>

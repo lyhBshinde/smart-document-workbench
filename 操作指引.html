@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Document Utility Center 操作指引</title>
+<style>
+:root {
+  --primary: #0078D4;
+  --primary-dark: #005A9E;
+  --bg: #F4F6F8;
+  --card: #FFFFFF;
+  --text: #1A1A1A;
+  --text-secondary: #5A5A5A;
+  --text-tertiary: #8A8A8A;
+  --border: #E5E5E5;
+  --success: #107C10;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.7;
+  padding: 40px 20px;
+}
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  background: var(--card);
+  border-radius: 8px;
+  padding: 48px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+h1 {
+  font-size: 28px;
+  color: var(--primary);
+  margin-bottom: 4px;
+}
+.subtitle {
+  font-size: 14px;
+  color: var(--text-tertiary);
+  margin-bottom: 32px;
+  padding-bottom: 24px;
+  border-bottom: 2px solid var(--primary);
+}
+h2 {
+  font-size: 18px;
+  color: var(--primary-dark);
+  margin: 32px 0 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.step {
+  background: #F8FAFC;
+  border-left: 4px solid var(--primary);
+  border-radius: 4px;
+  padding: 16px 20px;
+  margin: 12px 0;
+}
+.step-num {
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  line-height: 24px;
+  text-align: center;
+  background: var(--primary);
+  color: #fff;
+  border-radius: 50%;
+  font-size: 13px;
+  font-weight: 600;
+  margin-right: 8px;
+}
+.step-content {
+  display: inline;
+}
+.step-content strong {
+  color: var(--text);
+}
+ul, ol {
+  margin: 8px 0 8px 24px;
+}
+li {
+  margin: 4px 0;
+}
+.tip {
+  background: #E8F4FD;
+  border-radius: 4px;
+  padding: 12px 16px;
+  margin: 16px 0;
+  font-size: 14px;
+  color: var(--primary-dark);
+}
+.tip::before {
+  content: "提示 | ";
+  font-weight: 700;
+}
+.warn {
+  background: #FFF4E6;
+  border-radius: 4px;
+  padding: 12px 16px;
+  margin: 16px 0;
+  font-size: 14px;
+  color: #B85C00;
+}
+.warn::before {
+  content: "注意 | ";
+  font-weight: 700;
+}
+.code-inline {
+  background: #EDEDED;
+  border-radius: 3px;
+  padding: 2px 8px;
+  font-family: 'Consolas', 'Courier New', monospace;
+  font-size: 13px;
+}
+.footer {
+  margin-top: 40px;
+  padding-top: 24px;
+  border-top: 1px solid var(--border);
+  text-align: center;
+  font-size: 13px;
+  color: var(--text-tertiary);
+}
+.badge {
+  display: inline-block;
+  background: #E8F4FD;
+  color: var(--primary-dark);
+  font-size: 12px;
+  padding: 2px 10px;
+  border-radius: 12px;
+  margin-left: 8px;
+  vertical-align: middle;
+}
+.feature-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+  margin: 12px 0;
+}
+.feature-item {
+  background: #F0F4F8;
+  border-radius: 4px;
+  padding: 8px 14px;
+  font-size: 14px;
+}
+@media print {
+  body { padding: 0; background: #fff; }
+  .container { box-shadow: none; border-radius: 0; padding: 24px; }
+}
+</style>
+</head>
+<body>
+<div class="container">
+
+  <h1>Document Utility Center 操作指引</h1>
+  <div class="subtitle">企业微信云盘分发 &middot; 离线使用指南 &middot; V1.0</div>
+
+  <h2>工具简介</h2>
+  <p>离线文档处理工具中心，支持 JPG转PDF、PDF合并/拆分、图片批量重命名、A3报告生成。完全离线运行，不上传任何文件。</p>
+  <div class="feature-grid">
+    <div class="feature-item">JPG转PDF（批量）</div>
+    <div class="feature-item">PDF合并/拆分</div>
+    <div class="feature-item">图片批量重命名打包</div>
+    <div class="feature-item">A3报告辅助工具</div>
+  </div>
+
+  <h2>一、管理员：上传到企业微信云盘</h2>
+
+  <div class="step">
+    <span class="step-num">1</span>
+    <span class="step-content"><strong>打开企业微信</strong> &rarr; 左侧「云盘」&rarr; 右上角「+」上传文件</span>
+  </div>
+  <div class="step">
+    <span class="step-num">2</span>
+    <span class="step-content"><strong>上传 <span class="code-inline">DocumentUtilityCenter.zip</span></strong>（约330KB）</span>
+  </div>
+  <div class="step">
+    <span class="step-num">3</span>
+    <span class="step-content"><strong>右键文件 &rarr; 共享</strong> &rarr; 设置可见范围（选择部门或成员）&rarr; 确认</span>
+  </div>
+  <div class="step">
+    <span class="step-num">4</span>
+    <span class="step-content"><strong>复制共享链接</strong>，发送到工作群或通过公告通知</span>
+  </div>
+
+  <div class="tip">建议在云盘中创建专用文件夹（如「文档工具」），便于后续版本更新时统一管理。</div>
+
+  <h2>二、使用者：下载与安装</h2>
+
+  <div class="step">
+    <span class="step-num">1</span>
+    <span class="step-content"><strong>点击共享链接</strong> &rarr; 下载 <span class="code-inline">DocumentUtilityCenter.zip</span></span>
+  </div>
+  <div class="step">
+    <span class="step-num">2</span>
+    <span class="step-content"><strong>右键解压</strong>到任意目录（如桌面或 <span class="code-inline">D:\Tools</span>）</span>
+  </div>
+  <div class="step">
+    <span class="step-num">3</span>
+    <span class="step-content"><strong>双击 <span class="code-inline">index.html</span></strong>，系统自动用 Edge 浏览器打开</span>
+  </div>
+  <div class="step">
+    <span class="step-num">4</span>
+    <span class="step-content"><strong>创建桌面快捷方式</strong>：右键 <span class="code-inline">index.html</span> &rarr; 发送到 &rarr; 桌面快捷方式</span>
+  </div>
+
+  <div class="tip">解压后文件夹包含4个文件，请勿删除或重命名库文件（<span class="code-inline">.js</span> 和 <span class="code-inline">LICENSE</span>）。</div>
+
+  <h2>三、日常使用</h2>
+
+  <ul>
+    <li>双击桌面快捷方式或在文件夹中双击 <span class="code-inline">index.html</span> 启动</li>
+    <li>左侧导航选择功能模块，拖拽或点击上传文件</li>
+    <li>处理完成后文件自动下载到浏览器默认下载目录</li>
+    <li>使用完毕直接关闭浏览器标签页即可，无需退出或保存</li>
+  </ul>
+
+  <div class="warn">文件限制：单文件不超过500MB &middot; PDF不超过1000页 &middot; 图片不超过500张。</div>
+
+  <h2>四、版本更新</h2>
+
+  <ul>
+    <li>管理员在云盘替换 ZIP 文件，保持文件名不变</li>
+    <li>使用者重新下载解压，覆盖旧文件即可</li>
+    <li>浏览器刷新（Ctrl+F5）确保加载最新版本</li>
+  </ul>
+
+  <div class="footer">
+    &copy; Beshinde Document Utility Center &middot; Enterprise Offline Edition
+  </div>
+
+</div>
+</body>
+</html>
